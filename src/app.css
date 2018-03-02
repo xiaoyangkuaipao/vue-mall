@@ -1,0 +1,14 @@
+html, body, div, p, section {
+  margin: 0;
+  padding: 0;
+}
+
+.mint-indicator-text {
+  font-size: .8rem;
+  letter-spacing: 3px;
+}
+
+
+
+
+

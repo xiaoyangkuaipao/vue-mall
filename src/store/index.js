@@ -1,0 +1,23 @@
+/**
+ * Created by oxygen on 2017/8/11.
+ */
+import Vue from 'vue';
+import Vuex from 'vuex';
+import mutations from './mutations';
+import actions from './action';
+import getters from './getters';
+
+Vue.use(Vuex);
+
+const state = {
+  ticket: {},
+};
+
+export default new Vuex.Store({
+  state,
+  getters,
+  actions,
+  mutations,
+});
+
+
