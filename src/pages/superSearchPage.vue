@@ -1,152 +1,98 @@
 <template>
-  <div class='index-page'>
-    <div class="ticket-info" v-if="showTicketInfo" ref="ticket" @click="hideTicketInfo($event)">
-      <div class="header">
-        领券成功！
+  <div class='index-page' keep-alive>
+    <div style="overflow: auto; padding-bottom: 50px;">
+      <div class="search-text">
+        <p class="tips">温馨提示：本搜索引擎支持淘口令精确搜索优惠券</p>
+        <div class="token">
+          <textarea cols="35" rows="9" v-model="token" placeholder="请在搜索框内粘贴淘口令" />
+        </div>
       </div>
-      <div class="content">
-        <p class="title">{{ticket.title}}</p>
-        <p class="zk-final-price">原价：{{ticket.zk_final_price}}</p>
-        <p class="discount">券后价：{{ticket.discount}}</p>
-        <p class="model">优惠券码：{{ticket.model}}</p>
-        <p class="title">复制上述优惠券码打开淘宝即可领券购物！</p>
+      <div class="search-btns">
+        <section class="btn" @click="reset">重新搜券</section>
+        <section class="btn" @click="search">立即搜券</section>
       </div>
-    </div>
-    <div class="search-text">
-      <p class="tips">温馨提示：本搜索引擎支持淘口令精确搜索优惠券</p>
-      <div class="token">
-        <textarea cols="30" rows="7" v-model="token" placeholder="请在搜索框内粘贴淘宝令" style="background-color: #F0DEC6;"></textarea>
+      <div class="search-bg" v-if="!ticketsInfo && recommends.length === 0"/>
+      <div style="background-color: rgba(255, 255, 255, .7); padding: 5px 0" v-if="!(!ticketsInfo && recommends.length === 0)">
+        <h3 style="font-size: 10px; text-align: center; color: #ff9999;" v-if="ticketsInfo">/\  搜券成功，奉上优惠券  /\</h3>
+        <tickets-item
+          v-if="ticketsInfo"
+          :tickets-info='ticketsInfo' />
+        <div v-if="recommends.length !== 0">
+          <h3 style="font-size: 10px; text-align: center; color: #ff9999">/\  为您推荐  /\</h3>
+          <tickets-item
+            v-for='(item, index) in this.recommends'
+            :tickets-info='item'
+            :key='index'
+          />
+        </div>
       </div>
-    </div>
-    <div class="search-btn" @click="search"></div>
-    <div class="tickets-img" v-if="ticketsInfo.length===0">
-      <div class="search-bg"></div>
-    </div>
-    <div
-      class="tickets"
-      v-infinite-scroll="loadMore"
-      infinite-scroll-immediate-check="immediate"
-      infinite-scroll-distance="20"
-      v-if="ticketsInfo.length!==0">
-      <tickets-item
-        v-for='(item, index) in ticketsInfo'
-        :tickets-info='item'
-        :key='index'
-        @ticket='setTicket'>
-      </tickets-item>
     </div>
   </div>
 </template>
 
-<script lang='babel'>
+<script>
 import { Indicator, Toast  } from 'mint-ui';
-import ticketsItem from '../components/tickets-item';
+import ticketsItem from '../components/TicketsItem';
 
 export default {
   data() {
     return {
-      ticketsInfo: [],
-      ticket: {},
-      isLast: false,
-      immediate: false,
-      showTicketInfo: false,
-      searchPage: 1,
+      recommends: [],
+      ticketsInfo: null,
       token: '',
     };
   },
   created() {
-
+    const superSearchInfo = this.$store.state.superSearchInfo;
+    if(superSearchInfo.cache) {
+      this.ticketsInfo = superSearchInfo.ticket;
+      this.recommends = superSearchInfo.recommends;
+      this.token = superSearchInfo.taokouling;
+    }
+  },
+  beforeDestroy() {
+    this.$store.commit('SET_SUPERSEARCHS', {
+      ...this.$store.state.superSearchInfo,
+      ticket: this.ticketsInfo,
+      recommends: this.recommends,
+      taokouling: this.token,
+    })
   },
   methods: {
-    hideTicketInfo(e) {
-      if(e.target.className === "ticket-info"){
-        this.showTicketInfo = false;
-      }
+    reset() {
+      this.recommends = [];
+      this.ticketsInfo = null;
+      this.token = '';
     },
-    search() {
-      const self = this;
-      if(!(/\￥(.+)\￥/g).test(this.token)) {
+    async search() {
+      if(!(/[\￥\€](.+)[\￥\€]/g).test(this.token)) {
         Toast('淘口令不合法！');
         return
       }
-      const token = this.token.match(/\￥(.+)\￥/g)[0];
+      const token = this.token.match(/[\￥\€](.+)[\￥\€]/g)[0];
 
-      this.axios.get('https://www.iamyangqi.cn/wx-new-mall/superSearch.php', {
-        params: {
-          token: token
-        },
-      }).then(function(resp) {
-        const title = resp.data.content ? resp.data.content.match(/\（(.+)\）/g)[0].replace(/\（|\）/g, "")  : "";
-        const id = resp.data.url ? resp.data.url.match(/&id=(\d*)/)[1] : "";
-        self.axios.get('https://www.iamyangqi.cn/wx-new-mall/getRecommends.php', {
-          params: {
-            q: title,
-          },
-        }).then(function (resp) {
-          const appendTickets = resp.data.results.tbk_coupon;
-          const len = appendTickets.length;
-          if (len < 100) {
-            self.isLast = true;
-          }
-          for (let i = 0; i < len; i += 1) {
-            if(appendTickets[i].num_iid == id) {
-              const discount = appendTickets[i].coupon_info ? appendTickets[i].coupon_info.match(/\d+/g) : 0;
-              const discountPrice = discount[1] ? discount[1] : discount[0];
-              appendTickets[i].discountPrice = discountPrice;
-              appendTickets[i].discount =
-                (Number(appendTickets[i].zk_final_price) - discountPrice).toFixed(2);
-              self.ticketsInfo = [];
-              self.ticketsInfo.push(appendTickets[i]);
-              break;
-            }
-          }
-          if(self.ticketsInfo.length == 0) {
-            Toast('抱歉！该商品暂无优惠券！');
-            this.$router.push({
-              name: 'recommend',
-              params:{
-                title: title,
-              }
-            })
-          }
-        });
-      })
-    },
-    setTicket() {
-      this.ticket = this.$store.state.ticket;
-      this.showTicketInfo = true;
-    },
-    getTicketsItem() {
-      Indicator.open({
-        text: '淘货er中',
-        spinnerType: 'fading-circle',
-      });
-      const self = this;
-      this.axios.get('https://www.iamyangqi.cn/wx-new-mall/getTickets.php', {
-        params: {
-          q: self.q,
-          page: self.searchPage,
-        },
-      }).then(function (resp) {
-        const appendTickets = resp.data.results.tbk_coupon;
-        const len = appendTickets.length;
-        if (len < 20) {
-          self.isLast = true;
+      const resp = await this.api.superSearch(token);
+
+      const title = resp.content ? resp.content : "";
+      const id = resp.url ? resp.url.match(/&id=(\d*)/)[1] : "";
+
+      const t = await this.api.getRecommend(title);
+      const appendTickets = t.results.tbk_coupon;
+      const len = appendTickets.length;
+      for (let i = 0; i < len; i += 1) {
+        const discount = appendTickets[i].coupon_info ? appendTickets[i].coupon_info.match(/\d+/g) : 0;
+        const discountPrice = discount[1] ? discount[1] : discount[0];
+        appendTickets[i].discountPrice = discountPrice;
+        appendTickets[i].discount =
+          (Number(appendTickets[i].zk_final_price) - Number(discountPrice)).toFixed(2);
+        if(appendTickets[i].num_iid == id) {
+          this.ticketsInfo = appendTickets[i];
         }
-        for (let i = 0; i < len; i += 1) {
-          const discount = appendTickets[i].coupon_info ? appendTickets[i].coupon_info.match(/\d+/g) : 0;
-          const discountPrice = discount[1] ? discount[1] : discount[0];
-          appendTickets[i].discountPrice = discountPrice;
-          appendTickets[i].discount =
-            (Number(appendTickets[i].zk_final_price) - discountPrice).toFixed(2);
-        }
-        self.ticketsInfo = self.ticketsInfo.concat(appendTickets);
-        Indicator.close();
-      });
-    },
-    loadMore() {
-      this.searchPage += 1;
-      this.getTicketsItem();
+      }
+      this.recommends = appendTickets.filter(at => at.num_iid !== id);
+      if(!this.ticketsInfo) {
+        Toast('抱歉！该商品暂无优惠券！');
+      }
     },
   },
   components: { ticketsItem },
@@ -161,15 +107,16 @@ export default {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    background: url("../../static/imgs/super-bg.jpg") no-repeat;
+    background: url("../../static/imgs/super-search-bg.jpg") no-repeat;
     background-size: cover;
   }
 
   .tips{
-    height: 2rem;
-    line-height: 2rem;
-    color: red;
-    font-size: .75rem;
+    height: 3rem;
+    line-height: 3rem;
+    color: #FFF;
+    font-size: 13px;
+    text-align: center;
   }
 
   .token{
@@ -186,20 +133,28 @@ export default {
     overflow-y: auto;
   }
 
-  .tickets-img{
-    flex: 1;
-    overflow-y: hidden;
-  }
+  .search-btns {
+    width: 60vw;
+    height: 35px;
+    margin: 20px auto;
+    display: flex;
 
-  .search-btn{
-    width: 100px;
-    height: 30px;
-    background: url("../../static/imgs/search-btn.png") no-repeat;
-    background-size: cover;
-    margin: 10px auto;
-    font-size: .8rem;
-    letter-spacing: 2px;
-    -webkit-tap-highlight-color:transparent;
+    >.btn:first-of-type {
+      flex: 1;
+      line-height: 35px;
+      background-color: #FFF;
+      text-align: center;
+      color: #ff6b70;
+      border-radius: 35px 0 0 35px;
+    }
+    >.btn:last-of-type {
+      flex: 1;
+      line-height: 35px;
+      background-color: #ff6b70;
+      text-align: center;
+      color: #FFF;
+      border-radius: 0 35px 35px 0;
+    }
   }
 
   .ticket-info{
@@ -265,7 +220,7 @@ export default {
 
   .search-bg{
     width: 100vw;
-    height: 100%;
+    height: 72vw;
     background: url("../../static/imgs/super-search-bg.gif") no-repeat;
     background-size: contain;
   }

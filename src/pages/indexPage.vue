@@ -1,27 +1,6 @@
 <template>
-  <div class='index-page'>
-    <div class="ticket-info" v-if="showTicketInfo" ref="ticket" @click="hideTicketInfo($event)">
-      <div class="header">
-        领券成功！
-      </div>
-      <div class="content">
-        <p class="title">{{ticket.title}}</p>
-        <p class="zk-final-price">原价：{{ticket.zk_final_price}}</p>
-        <p class="discount">券后价：{{ticket.discount}}</p>
-        <p class="model">优惠券码：{{ticket.model}}</p>
-        <p class="title">复制上述优惠券码打开淘宝即可领券购物！</p>
-      </div>
-    </div>
-    <div class="search">
-      <i class="iconfont icon-taobao search-icon"></i>
-      <i class="iconfont icon-yewutubiaosheng search-icon"></i>
-      <div
-        class="search-input"
-        @click="search"> 淘货er， 最全淘宝优惠券！
-      </div>
-      <i class="iconfont icon-101 search-icon"></i>
-      <i class="iconfont icon-tehui search-icon"></i>
-    </div>
+  <div class='index-page' ref="indexPage" v-scroll-more="loadMore" >
+    <SearchItem style="position: fixed; top: 0; z-index: 100"/>
     <mt-swipe :auto="10000" class="swiper">
       <mt-swipe-item>
         <img src="../../static/imgs/slogan-1.jpg" class="slide-image">
@@ -33,83 +12,45 @@
         <img src="../../static/imgs/slogan-3.jpg" class="slide-image">
       </mt-swipe-item>
     </mt-swipe>
-    <div class="categories">
-      <div
-        class="categories-item"
-        v-for='(item, index) in categories'
-        @click="setCategory(item.q)">
-        <img-with-text
-          :content='item'
-          :key='index'>
-        </img-with-text>
-      </div>
+    <div class="subject-block">
+      <h3 style="font-size: 10px; text-align: center; color: #ff9999">/\  淘货er专区  /\</h3>
+      <section>
+        淘货er精选
+      </section>
+      <section>
+        <article>
+          <p>拼个团</p>
+        </article>
+        <article>
+          <p>大牌驾到</p>
+        </article>
+      </section>
     </div>
     <div
       keep-alive
-      class="tickets"
-      v-infinite-scroll="loadMore"
-      infinite-scroll-immediate-check="immediate"
-      infinite-scroll-distance="20">
+      class="tickets">
+      <h3 style="font-size: 10px; text-align: center; color: #ff9999">/\  好券er放送  /\</h3>
       <tickets-item
-        v-for='(item, index) in ticketsInfo'
+        v-for='(item, index) in this.$store.state.indexInfo.tickets'
         :tickets-info='item'
         :key='index'
-        @ticket='setTicket'>
+        >
       </tickets-item>
     </div>
     <div class="footer-text" v-if="isLast">~~是时候看到淘货er的底线了~~</div>
   </div>
 </template>
 
-<script lang='babel'>
+<script>
 import { Indicator } from 'mint-ui';
 import imgWithText from '../components/img-with-text';
-import ticketsItem from '../components/tickets-item';
+import ticketsItem from '../components/TicketsItem';
+import SearchItem from '../components/SearchItem';
+import $ from 'jquery';
 
 export default {
   data() {
     return {
-      categories: [{
-        name: '全部',
-        q: '',
-        pic: '../../static/imgs/all.jpg',
-      }, {
-        name: '女装',
-        q: '女装',
-        pic: '../../static/imgs/lady-clothes.jpg',
-      }, {
-        name: '男装',
-        q: '男装',
-        pic: '../../static/imgs/man-clothes.jpg',
-      }, {
-        name: '女鞋',
-        q: '女鞋',
-        pic: '../../static/imgs/lady-shoes.jpg',
-      }, {
-        name: '男鞋',
-        q: '男鞋',
-        pic: '../../static/imgs/man-shoes.jpg',
-      }, {
-        name: '美妆',
-        q: '美妆',
-        pic: '../../static/imgs/lips.jpg',
-      }, {
-        name: '零食',
-        q: '零食',
-        pic: '../../static/imgs/snacks.jpg',
-      }, {
-        name: '箱包',
-        q: '旅行箱',
-        pic: '../../static/imgs/bags.jpg',
-      }, {
-        name: '电器',
-        q: '电',
-        pic: '../../static/imgs/appliances.jpg',
-      }, {
-        name: '保健品',
-        q: '保健品',
-        pic: '../../static/imgs/health.jpg',
-      }],
       ticketsInfo: [],
       ticket: {},
       isLast: false,
@@ -120,64 +61,56 @@ export default {
     };
   },
   created() {
-    const self = this;
-    this.getTicketsItem();
+    if(this.$store.state.indexInfo.tickets.length === 0) {  // 初始化的时候加载一次
+      this.getTickets(this.q, this.searchPage)
+    } else {
+      this.ticketsInfo = this.$store.state.indexInfo.tickets;
+    }
+  },
+  mounted() {
+    if(this.$store.state.indexInfo.top) {
+      window.scrollTo(0, this.$store.state.indexInfo.top);
+    }
+  },
+  beforeDestroy() {
+    const scrollTop = this.$refs['indexPage'].dataset.top;
+    const indexInfo = {...this.$store.state.indexInfo};
+    indexInfo.top = scrollTop;
+    this.$store.commit('SET_INDEX_TICKETS', indexInfo);
   },
   methods: {
-    search() {
-      this.$router.push({
-        name: 'search',
-      })
-    },
-    hideTicketInfo(e) {
-      if(e.target.className === "ticket-info"){
-        this.showTicketInfo = false;
-      }
-    },
-    setCategory(q) {
-      this.q = q;
-      this.searchPage = 1;
-      this.ticketsInfo = [];
-      this.getTicketsItem();
-    },
-    setTicket() {
-      this.ticket = this.$store.state.ticket;
-      this.showTicketInfo = true;
-    },
-    getTicketsItem() {
+    async getTickets(q, page) {   // q: 查询内容 ； page: 查询页数
       Indicator.open({
         text: '淘货er中',
         spinnerType: 'fading-circle',
       });
-      const self = this;
-      this.axios.get('https://www.iamyangqi.cn/wx-new-mall/getTickets.php', {
-        params: {
-          q: self.q,
-          page: self.searchPage,
-        },
-      }).then(function (resp) {
-        const appendTickets = resp.data.results.tbk_coupon;
-        const len = appendTickets.length;
-        if (len < 20) {
-          self.isLast = true;
-        }
-        for (let i = 0; i < len; i += 1) {
-          const discount = appendTickets[i].coupon_info ? appendTickets[i].coupon_info.match(/\d+/g) : 0;
-          const discountPrice = discount[1] ? discount[1] : discount[0];
-          appendTickets[i].discountPrice = discountPrice;
-          appendTickets[i].discount =
-            (Number(appendTickets[i].zk_final_price) - discountPrice).toFixed(2);
-        }
-        self.ticketsInfo = self.ticketsInfo.concat(appendTickets);
-        Indicator.close();
-      });
+      const resp = await this.api.getTickets(q, page);
+      const appendTickets = resp.results.tbk_coupon;
+      const len = appendTickets.length;
+      if (len < 20) {
+        this.isLast = true;
+      }
+      for (let i = 0; i < len; i += 1) {
+        const discount = appendTickets[i].coupon_info ? appendTickets[i].coupon_info.match(/\d+/g) : 0;
+        const discountPrice = discount[1] ? discount[1] : discount[0];
+        appendTickets[i].discountPrice = discountPrice;
+        appendTickets[i].discount =
+          (Number(appendTickets[i].zk_final_price) - discountPrice).toFixed(2);
+      }
+      this.ticketsInfo = this.ticketsInfo.concat(appendTickets);
+      const ticketsInfo = {...this.$store.state.indexInfo};
+      ticketsInfo.tickets = this.ticketsInfo;
+      ticketsInfo.page = page;
+      this.$store.commit('SET_INDEX_TICKETS', ticketsInfo);
+      Indicator.close();
     },
+
     loadMore() {
-      this.searchPage += 1;
-      this.getTicketsItem();
+      this.searchPage = this.$store.state.indexInfo.page + 1;
+      this.getTickets(this.q, this.searchPage);
     },
   },
-  components: { imgWithText, ticketsItem },
+  components: { imgWithText, ticketsItem, SearchItem },
 };
 </script>
 
@@ -186,21 +119,8 @@ export default {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  .categories{
-    width: 100vw;
-    height: 4.5rem;
-    margin-top: .5rem;
-    overflow-x: auto;
-    display: flex;
-  }
-
-  .categories-item{
-    margin:0 .5rem;
+    overflow: auto;
+    padding: 2.5rem 0 55px 0;
   }
 
   .tickets{
@@ -218,55 +138,26 @@ export default {
     background-size: cover;
   }
 
-  .search{
-    width: 100vw;
-    height: 2.5rem;
-    line-height: 2.5rem;
-    margin-bottom: .2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-  }
+  .subject-block {
+    >section {
+      display: flex;
+      width: 95vw;
+      height: 30vw;
+      margin: .8rem auto;
+      text-align: center;
+      justify-content: space-between;
 
-  .search-icon{
-    font-size: 1.6rem;
-  }
+      >article {
+        display: inline-block;
+        width: 45vw;
+        height: 100%;
+        box-shadow: 2px 2px 2px 2px #DDD;
+      }
+    }
 
-  .search-icon:nth-of-type(1){
-    color: orange;
-  }
-
-  .search-icon:nth-of-type(2){
-    color: #F15A24;
-  }
-
-  .search-icon:nth-of-type(3){
-    color: #F15A24;
-  }
-
-  .search-icon:nth-of-type(4){
-    color: orange;
-  }
-
-  .search-input{
-    position: relative;
-    width: 13rem;
-    height: 1.4rem !important;
-    line-height: 1.4rem;
-    padding-left: 1.5rem;
-    font-size: .6rem;
-    letter-spacing: 2px;
-    border-radius: 5px;
-    border: 1px solid #CCC;
-    color: #A8725A;
-  }
-
-  .search-input::before {
-    position: absolute;
-    left: .14rem;
-    content: "\e61e";
-    font-family: "iconfont";
-    font-size: 1rem;
+    >section:first-of-type {
+      box-shadow: 2px 2px 2px 2px #DDD;
+    }
   }
 
   .footer-text{

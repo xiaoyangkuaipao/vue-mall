@@ -1,12 +1,16 @@
 <template>
   <div id="app">
+    <red-packet v-show="this.$store.state.showRedPacket"/>
     <router-view/>
   </div>
 </template>
 
 <script>
+import RedPacket from './components/RedPacket';
+
 export default {
   name: 'App',
+  components: { RedPacket }
 };
 </script>
 

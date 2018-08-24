@@ -50,7 +50,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/vue-mall/', // 打包根路径
+    assetsPublicPath: '/taohuo/', // 打包根路径
 
     /**
      * Source Maps

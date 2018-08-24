@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<script lang='babel'>
+<script>
 export default {
   props: ['content'],
 };

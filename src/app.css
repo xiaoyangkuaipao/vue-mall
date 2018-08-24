@@ -3,9 +3,28 @@ html, body, div, p, section {
   padding: 0;
 }
 
+a {
+  text-decoration: none;
+}
+
 .mint-indicator-text {
   font-size: .8rem;
   letter-spacing: 3px;
+}
+
+.mint-tabbar {
+  height: 55px;
+  background-color: #ff9999;
+  color: #FFF;
+}
+
+.mint-tab-item-icon>i{
+  font-size: 20px !important;
+}
+
+.mint-tab-item.is-selected {
+  background-color: #FFF !important;
+  color: #ff9999 !important;
 }
 
 
