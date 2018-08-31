@@ -7,6 +7,7 @@ import superSearchPage from '@/pages/superSearchPage';
 import TicketDetailPage from '@/pages/TicketDetailPage';
 import CollectionsPage from '@/pages/CollectionsPage';
 import MinePage from '@/pages/MinePage';
+import TopicPage from '@/pages/TopicPage';
 
 Vue.use(Router);
 
@@ -33,6 +34,11 @@ export default new Router({
       path: '/search/',
       name: 'search',
       component: searchPage,
+    },
+    {
+      path: '/topic/',
+      name: 'topic',
+      component: TopicPage,
     }
   ],
 })

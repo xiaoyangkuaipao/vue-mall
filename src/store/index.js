@@ -39,6 +39,12 @@ const state = {
   collectionsTop: 0,  // 收藏夹高度
   history: [],     // 搜索历史
   tab: '',         // 下标active
+  topic: {
+    tickets: [], // topic页所有的优惠券,
+    page: 1, // topic页当前页码
+    topic: {},   // topic页的信息
+    top: 0,  // topic页scrolltop
+  }
 };
 
 if(window.localStorage.getItem('history')) {
@@ -51,6 +57,10 @@ if(window.localStorage.getItem('collections')) {
 
 if(window.localStorage.getItem('mines')) {
   state.mines = JSON.parse(window.localStorage.getItem('mines'));
+}
+
+if(window.sessionStorage.getItem('topic')) {
+  state.topic = JSON.parse(window.sessionStorage.getItem('topic'));
 }
 
 export default new Vuex.Store({

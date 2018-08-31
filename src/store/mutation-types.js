@@ -13,5 +13,6 @@ export const SET_SUPERSEARCHS = 'SET_SUPERSEARCHS'; // 设置淘口令页面信�
 export const SET_TAB = 'SET_TAB'; // 设置TAB
 export const EMPTY_HISTORY = 'EMPTY_HISTORY'; // 清空历史
 export const SET_MINE_TICKETS = 'SET_MINE_TICKETS'; // 设置mine tickets
+export const SET_TOPIC = 'SET_TOPIC'; // 设置专题信息
 
 

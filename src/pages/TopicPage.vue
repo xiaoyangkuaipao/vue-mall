@@ -1,48 +1,13 @@
 <template>
-  <div class="search-page" ref="searchPage">
-    <div class="search">
-      <i class="iconfont icon-yewutubiaosheng search-icon"></i>
-      <input
-        class="search-input"
-        placeholder="淘货er， 最全淘宝优惠券！"
-        v-model="q"
-        @click="search">
-      <i class="iconfont icon-sousuo sousuo-icon"></i>
-      <i class="iconfont icon-shanchu3 delete-icon" v-if="q" @click="cancel"></i>
-      <span style="font-size: 14px; color: #555; letter-spacing: 1px" @click="search">搜索</span>
-    </div>
-    <div style="margin-top: 3.5rem" v-if="this.ticketsInfo.length === 0">
-      <p style="font-size: 12px; text-align: left; color: #AAA; padding-left: .5rem;" >热门搜索</p>
-      <div class="history">
-        <label
-          class="history-item"
-          v-for='item in this.hot'
-          :key="item"
-          @click="searchHistory(item)"
-        >{{item}}</label>
-      </div>
-      <p class="history-title">
-        <span>搜索历史</span>
-        <span style="margin-right: 1rem" @click="emptyHistory">
-          <i class="iconfont icon-qingkong"/>
-          <span>清空历史</span>
-        </span>
-      </p>
-      <div class="history">
-        <label
-          class="history-item"
-          v-for='item in this.$store.state.history'
-          :key="item"
-          @click="searchHistory(item)"
-        >{{item}}</label>
-      </div>
-    </div>
-    <div style="margin-top: 3rem">
-      <tickets-item
+  <div class="search-page" ref="topicPage">
+    <header class="header">{{topic.name}}</header>
+    <img :src="topic.img" :alt="topic.name" style="width: 100vw; height: 45vw;" >
+    <div class="card-search-page">
+      <card-tickets-item
         v-for='(item, index) in ticketsInfo'
         :tickets-info='item'
         :key='index'>
-      </tickets-item>
+      </card-tickets-item>
     </div>
     <div class="footer-text" v-if="isLast">~~是时候看到淘货er的底线了~~</div>
   </div>
@@ -50,66 +15,58 @@
 
 <script>
 import { Indicator } from 'mint-ui';
-import ticketsItem from '../components/TicketsItem';
 import cardTicketsItem from '../components/CardTicketsItem';
 import $ from 'jquery';
 
 export default {
   data() {
     return {
-      hot: ['手机', '洗衣液', '卫生纸', '时尚连衣裙', '化妆品', '男鞋', '拉杆箱', '巧克力', '内衣'],
       ticketsInfo: [],
       searchPage: 1,
       q: '',
       isLast: false,
+      topic: {},
     };
   },
   created() {
-    const searchInfo = this.$store.state.searchInfo;
-    if(searchInfo.cache) {
-      this.ticketsInfo = searchInfo.tickets;
-      this.searchPage = searchInfo.page;
-      this.q = searchInfo.q;
-    }
     if(this.$route.params.q) {
       this.q = this.$route.params.q;
+      const topic = this.$route.params;
+      this.topic = topic;
       this.search();
+    } else {
+      const topic = JSON.parse(window.sessionStorage.getItem('topic'))
+      this.topic = topic;
+      this.q = topic.q;
+      this.ticketsInfo = topic.tickets;
     }
   },
   mounted() {
-    const searchInfo = this.$store.state.searchInfo;
-    if(searchInfo.cache && searchInfo.top) {
-      window.scrollTo(0, searchInfo.top);
+    const topic = this.$store.state.topic;
+    if(topic.top) {
+      window.scrollTo(0, topic.top);
     }
     const self = this;
     $(window).on('scroll', async function() {
       const clientHeight = $(this).height();
       const scrollTop = $(this).scrollTop();
       const scrollHeight = $(document).height();
-      self.$refs['searchPage'].dataset.top = scrollTop;
+      self.$refs['topicPage'].dataset.top = scrollTop;
       if(scrollTop + clientHeight + 50 > scrollHeight){
         await self.loadMore();
       }
     })
   },
   beforeDestroy() {
-    const scrollTop = this.$refs['searchPage'].dataset.top;
-    const searchInfo = {...this.$store.state.searchInfo};
-    searchInfo.top = scrollTop;
-    this.$store.commit('SET_SEARCH_TICKETS', searchInfo);
+    const scrollTop = this.$refs['topicPage'].dataset.top;
+    const topic = {...this.$store.state.topic};
+    topic.top = scrollTop;
+    this.$store.commit('SET_TOPIC', topic);
   },
   destroyed() {
     $(window).off('scroll')
   },
   methods: {
-    cancel() {
-      this.q  = "";
-      this.ticketsInfo = [];
-    },
-    searchHistory(q) {
-      this.q = q;
-      this.search();
-    },
     async search() {
       this.searchPage = 1;
       this.ticketsInfo = [];
@@ -122,12 +79,9 @@ export default {
     },
     loadMore() {
       if(this.q) {
-        this.searchPage = this.$store.state.searchInfo.page + 1;
+        this.searchPage = this.$store.state.topic.page + 1;
         this.getTickets(this.q, this.searchPage);
       }
-    },
-    emptyHistory() {
-      this.$store.commit('EMPTY_HISTORY')
     },
     async getTickets(q, page) {   // q: 查询内容 ； page: 查询页数
       Indicator.open({
@@ -152,11 +106,11 @@ export default {
       ticketsInfo.tickets = this.ticketsInfo;
       ticketsInfo.page = page;
       ticketsInfo.q = this.q;
-      this.$store.commit('SET_SEARCH_TICKETS', ticketsInfo);
+      this.$store.commit('SET_TOPIC', ticketsInfo);
       Indicator.close();
     },
   },
-  components: { ticketsItem, cardTicketsItem },
+  components: { cardTicketsItem },
 };
 </script>
 

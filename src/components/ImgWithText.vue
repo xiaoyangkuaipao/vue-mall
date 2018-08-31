@@ -11,9 +11,10 @@ export default {
   methods: {
     search() {
       this.$router.push({
-        name: 'search',
+        name: 'topic',
         params: {
-          q: this.content.q
+          q: this.content.q,
+          name: this.content.name,
         }
       })
     }

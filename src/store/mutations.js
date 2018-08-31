@@ -14,6 +14,7 @@ import {
   SET_COLLECTIONS_TOP,
   CANCEL_COLLECTIONS,
   SET_MINE_TICKETS,
+  SET_TOPIC
 } from './mutation-types';
 
 import { getCurrentDate } from '../utils/index';
@@ -87,6 +88,10 @@ export default {
     const arr = state.collections.filter(c => c.num_iid !== ticket.num_iid);
     state.collections = arr;
     window.localStorage.setItem('collections', JSON.stringify(state.collections));
+  },
+  [SET_TOPIC](state, topic) {
+    state.topic = topic;
+    window.sessionStorage.setItem('topic', JSON.stringify(state.topic));
   },
   [SET_TAB](state, tab) {
     state.tab = tab;
