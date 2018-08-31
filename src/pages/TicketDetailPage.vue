@@ -11,11 +11,11 @@
     <img :src="ticketInfo.pict_url" :alt="ticketInfo.title" v-if="!ticketInfo.small_images" class="slide-image">
     <p class="ticket-title">{{this.ticketInfo.title}}</p>
     <section style="display: flex; height: 25px; align-items: center; padding: 0 5px">
-      <p class="ticket-shop">{{this.ticketInfo.shop_title}}</p>
+      <p class="ticket-shop">店铺：{{this.ticketInfo.shop_title}}</p>
       <p class="ticket-volume">销量：{{this.ticketInfo.volume}}</p>
     </section>
     <p class="zkq_price">原价： {{this.ticketInfo.zk_final_price}}元</p>
-    <p class="zkh_price">折后价： {{this.ticketInfo.discount}}元 ， 优惠 {{this.ticketInfo.zk_final_price - this.ticketInfo.discount}} 元</p>
+    <p class="zkh_price">折后价格： {{this.ticketInfo.discount}}元 ， 优惠 {{this.ticketInfo.discountPrice}} 元</p>
     <p class="zk_time">
       折扣时间： {{this.ticketInfo.coupon_start_time}} 至 {{this.ticketInfo.coupon_end_time}}
     </p>
@@ -23,7 +23,7 @@
       商品简介：{{`${this.ticketInfo.title}，${this.ticketInfo.coupon_info}，${this.ticketInfo.item_description}`}}
     </p>
     <div style="border-top: 1px dashed #CCC; border-bottom: 1px dashed #CCC; height: 5px; margin: 15px 0;"/>
-    <h3 style="font-size: 10px; text-align: center; color: #ff9999" v-if="this.recommendTickets.length !== 0">/\  同款比价  /\</h3>
+    <h3 style="font-size: 12px; text-align: center; color: #ff9999" v-if="this.recommendTickets.length !== 0">/\  同款比价  /\</h3>
     <tickets-item
       v-for='(item, index) in this.recommendTickets'
       :tickets-info='item'
@@ -31,7 +31,7 @@
       @handelSetRecommend="setRecommend"
     >
     </tickets-item>
-    <operate-buttons :ticket="this.ticketInfo"/>
+    <operate-buttons :ticket="ticketInfo"/>
   </div>
 </template>
 
@@ -118,6 +118,7 @@
   }
 
   .ticket-detail .ticket-volume {
+    padding: 0 5px;
     font-size: 12px;
     color: #666;
   }
@@ -125,7 +126,8 @@
   .ticket-description {
     padding: 0 5px;
     line-height: 25px;
-    font-size: 14px;
+    font-size: 12px;
+    color: #666;
   }
 
   .zkq_price {
@@ -144,7 +146,7 @@
   .zk_time {
     height: 30px;
     line-height: 30px;
-    font-size: 13px;
+    font-size: 14px;
     padding: 5px;
   }
 

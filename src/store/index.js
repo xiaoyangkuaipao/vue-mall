@@ -30,13 +30,16 @@ const state = {
     taokouling: '',  // 淘口令
     cache: false,    // 是否使用缓存
   },
+  mines: {           // 我的列表
+    len: 0,
+    sum: 0,
+    tickets: {}
+  },
   collections: [],     // 收藏夹信息,
   collectionsTop: 0,  // 收藏夹高度
   history: [],     // 搜索历史
   tab: '',         // 下标active
 };
-
-// const state = window.sessionStorage.getItem('state') ? JSON.parse(window.sessionStorage.getItem('state')) : initState;
 
 if(window.localStorage.getItem('history')) {
   state.history = JSON.parse(window.localStorage.getItem('history'));
@@ -44,6 +47,10 @@ if(window.localStorage.getItem('history')) {
 
 if(window.localStorage.getItem('collections')) {
   state.collections = JSON.parse(window.localStorage.getItem('collections'));
+}
+
+if(window.localStorage.getItem('mines')) {
+  state.mines = JSON.parse(window.localStorage.getItem('mines'));
 }
 
 export default new Vuex.Store({

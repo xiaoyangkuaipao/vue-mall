@@ -1,5 +1,5 @@
 <template>
-  <div class='iwt'>
+  <div class='iwt' @click="search">
     <img :src='content.pic' :alt='content.q' class='iwt-img'>
     <p class='iwt-text'>{{content.name}}</p>
   </div>
@@ -8,6 +8,16 @@
 <script>
 export default {
   props: ['content'],
+  methods: {
+    search() {
+      this.$router.push({
+        name: 'search',
+        params: {
+          q: this.content.q
+        }
+      })
+    }
+  }
 };
 </script>
 
@@ -15,22 +25,23 @@ export default {
   .iwt {
     display: flex;
     flex-direction: column;
-    width: 3rem;
-    height: 4.5rem;
+    width: 15vw;
+    height: 20vw;
+    margin: .3rem 4vw;
   }
 
   .iwt-img{
-    width: 3rem;
-    height: 3rem;
+    width: 15vw;
+    height: 15vw;
     border-radius: 100%;
   }
 
   .iwt-text{
-    width: 3rem;
-    height: 1.5rem;
-    line-height: 1.5rem;
+    width: 15vw;
+    height: 5vw;
+    line-height: 5vw;
     text-align: center;
-    font-size: .75rem;
-    letter-spacing: 2px;
+    font-size: 12px;
+    color: #000;
   }
 </style>

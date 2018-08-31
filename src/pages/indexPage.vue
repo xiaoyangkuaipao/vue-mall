@@ -1,5 +1,5 @@
 <template>
-  <div class='index-page' ref="indexPage" v-scroll-more="loadMore" >
+  <div class='index-page' ref="indexPage">
     <SearchItem style="position: fixed; top: 0; z-index: 100"/>
     <mt-swipe :auto="10000" class="swiper">
       <mt-swipe-item>
@@ -12,24 +12,35 @@
         <img src="../../static/imgs/slogan-3.jpg" class="slide-image">
       </mt-swipe-item>
     </mt-swipe>
+    <div class="categories">
+      <div class="categories-inner">
+        <img-with-text
+          v-for="item in this.categories"
+          :content="item"
+          :key="item.q"/>
+      </div>
+    </div>
     <div class="subject-block">
-      <h3 style="font-size: 10px; text-align: center; color: #ff9999">/\  淘货er专区  /\</h3>
+      <h3 style="font-size: 12px; text-align: center; color: #ff9999">/\  淘货er专区  /\</h3>
       <section>
-        淘货er精选
+        支付宝红包
       </section>
       <section>
         <article>
-          <p>拼个团</p>
+          <p>限时券</p>
         </article>
         <article>
           <p>大牌驾到</p>
         </article>
       </section>
+      <section>
+        9.9包邮
+      </section>
     </div>
     <div
       keep-alive
       class="tickets">
-      <h3 style="font-size: 10px; text-align: center; color: #ff9999">/\  好券er放送  /\</h3>
+      <h3 style="font-size: 12px; text-align: center; color: #ff9999">/\  好券er放送  /\</h3>
       <tickets-item
         v-for='(item, index) in this.$store.state.indexInfo.tickets'
         :tickets-info='item'
@@ -43,7 +54,7 @@
 
 <script>
 import { Indicator } from 'mint-ui';
-import imgWithText from '../components/img-with-text';
+import imgWithText from '../components/ImgWithText';
 import ticketsItem from '../components/TicketsItem';
 import SearchItem from '../components/SearchItem';
 import $ from 'jquery';
@@ -58,6 +69,48 @@ export default {
       showTicketInfo: false,
       searchPage: 1,
       q: '',
+      categories: [
+        {
+          pic: require('../../static/imgs/snacks.jpg'),
+          q: '零食',
+          name: '零食'
+        },
+        {
+          pic: require('../../static/imgs/lips.jpg'),
+          q: '口红',
+          name: '美妆'
+        },
+        {
+          pic: require('../../static/imgs/lady-clothes.jpg'),
+          q: '女装',
+          name: '女装'
+        },
+        {
+          pic: require('../../static/imgs/man-clothes.jpg'),
+          q: '男装',
+          name: '男装'
+        },
+        {
+          pic: require('../../static/imgs/appliances.jpg'),
+          q: '家用电器',
+          name: '电器'
+        },
+        {
+          pic: require('../../static/imgs/bags.jpg'),
+          q: '箱包',
+          name: '箱包'
+        },
+        {
+          pic: require('../../static/imgs/lady-shoes.jpg'),
+          q: '女鞋',
+          name: '女鞋'
+        },
+        {
+          pic: require('../../static/imgs/man-shoes.jpg'),
+          q: '男鞋',
+          name: '男鞋'
+        },
+      ],
     };
   },
   created() {
@@ -71,12 +124,25 @@ export default {
     if(this.$store.state.indexInfo.top) {
       window.scrollTo(0, this.$store.state.indexInfo.top);
     }
+    const self = this;
+    $(window).on('scroll', async function() {
+      const clientHeight = $(this).height();
+      const scrollTop = $(this).scrollTop();
+      const scrollHeight = $(document).height();
+      self.$refs['indexPage'].dataset.top = scrollTop;
+      if(scrollTop + clientHeight + 50 > scrollHeight){
+        await self.loadMore();
+      }
+    })
   },
   beforeDestroy() {
     const scrollTop = this.$refs['indexPage'].dataset.top;
     const indexInfo = {...this.$store.state.indexInfo};
     indexInfo.top = scrollTop;
     this.$store.commit('SET_INDEX_TICKETS', indexInfo);
+  },
+  destroyed() {
+    $(window).off('scroll')
   },
   methods: {
     async getTickets(q, page) {   // q: 查询内容 ； page: 查询页数
@@ -120,7 +186,24 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: auto;
-    padding: 2.5rem 0 55px 0;
+    padding: 3rem 0 55px 0;
+    background-color: rgb(240, 240 ,240);
+  }
+
+  .categories {
+    height: 12rem;
+    width: 96%;
+    margin: -.5rem 2% 0 2%;
+    position: relative;
+    border-radius: 5%;
+    background-color: rgba(255, 253, 253, 0.9);
+  }
+
+  .categories-inner {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
   }
 
   .tickets{
@@ -129,12 +212,12 @@ export default {
   }
 
   .swiper{
-    height: 20vh;
+    height: 40vw;
   }
 
   .slide-image{
     width: 100vw;
-    height: 20vh;
+    height: 40vw;
     background-size: cover;
   }
 
@@ -151,11 +234,11 @@ export default {
         display: inline-block;
         width: 45vw;
         height: 100%;
-        box-shadow: 2px 2px 2px 2px #DDD;
+        box-shadow: 2px 2px 2px 2px #EEE;
       }
     }
 
-    >section:first-of-type {
+    >section:first-of-type,  >section:last-of-type{
       box-shadow: 2px 2px 2px 2px #DDD;
     }
   }

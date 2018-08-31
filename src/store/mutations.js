@@ -13,11 +13,13 @@ import {
   EMPTY_HISTORY,
   SET_COLLECTIONS_TOP,
   CANCEL_COLLECTIONS,
+  SET_MINE_TICKETS,
 } from './mutation-types';
+
+import { getCurrentDate } from '../utils/index';
 
 export default {
   [SET_TICKETINFO](state, ticket) {
-    state.showRedPacket = true;
     state.ticket = ticket;
     // window.sessionStorage.setItem('state', JSON.stringify(state));
   },
@@ -58,6 +60,26 @@ export default {
     arr.push(ticket);
     state.collections = arr;
     window.localStorage.setItem('collections', JSON.stringify(state.collections));
+  },
+  [SET_MINE_TICKETS](state,
+    ticket,
+  ) {
+    const date = getCurrentDate(1);
+    if(state.mines.tickets.hasOwnProperty(date)) {
+      const tickets = state.mines.tickets[date];
+      const flag = tickets.every(t  => t.num_iid !== ticket.num_iid);
+      if(flag) {
+        state.mines.tickets[date].push(ticket)
+        state.mines.len += 1;
+        state.mines.sum += ticket.discountPrice;
+      }
+    } else {
+      state.mines.tickets[date] = [];
+      state.mines.tickets[date].push(ticket)
+      state.mines.len = Number(state.mines.len) + 1;
+      state.mines.sum = Number(state.mines.sum) + Number(ticket.discountPrice);
+    }
+    window.localStorage.setItem('mines', JSON.stringify(state.mines));
   },
   [CANCEL_COLLECTIONS](state,
     ticket,

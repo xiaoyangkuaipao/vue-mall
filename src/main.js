@@ -20,13 +20,13 @@ Vue.prototype.api = api;
 
 Vue.directive('scrollMore', {
   bind: function(el, binding) {
-    $(window).on('scroll', function() {
+    $(window).on('scroll', async function() {
       const clientHeight = $(this).height();
       const scrollTop = $(this).scrollTop();
       const scrollHeight = $(document).height();
       el.dataset.top = scrollTop;
-      if(scrollTop + clientHeight == scrollHeight){
-        binding.value();
+      if(scrollTop + clientHeight === scrollHeight){
+        await binding.value();
       }
     })
   },
@@ -60,7 +60,7 @@ new Vue({
           searchInfo.cache = false;
         }
       }
-      if(to.name === "home" || "superSearch") {
+      if(to.name === "home" || "superSearch" || "collections") {
         this.$store.commit('SET_TAB', to.name);
       }
       this.$store.commit('SET_SUPERSEARCHS', superSearchInfo);

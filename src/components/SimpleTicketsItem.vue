@@ -6,19 +6,8 @@
     <div class="flex-column-center" style="flex: 1">
       <div class="tickets-info">
         <div class="title">{{ticketsInfo.title}}</div>
-        <!--<div class="shop">店铺：{{ticketsInfo.shop_title}}</div>-->
-        <div class="volumn">销量：{{ticketsInfo.volume}}</div>
-        <!--<div class="reason">推荐理由： {{`${ticketsInfo.item_description} 淘货er精选，好而不贵！`}} </div>-->
-        <div>
-          <span class="delete-text">原价： {{ticketsInfo.zk_final_price}}元</span>
-          <span class="zkh-price">
-            <i class="iconfont icon-lingquan-copy"/>
-            <span>{{ticketsInfo.discountPrice}} 元</span>
-          </span>
-        </div>
-        <div class="discount">
-          <span>优惠价： {{ticketsInfo.discount}} 元</span>
-        </div>
+        <div class="delete-text">原价： {{ticketsInfo.zk_final_price}}元</div>
+        <div class="discount">优惠价： {{ticketsInfo.discount}}元</div>
       </div>
     </div>
   </div>
@@ -54,9 +43,9 @@ export default {
     justify-content: space-between;
     position: relative;
     width: 96%;
-    margin: 1rem 2%;
-    height: 35vw;
-    border-radius: 5px 5px 2px 2px;
+    margin: .75rem 2%;
+    height: 25vw;
+    border-radius: 5px;
     background-color: #FFF;
   }
 
@@ -65,14 +54,14 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    width: 35vw;
-    height: 35vw;
-    background-color: rgba(250, 250, 250, .9);
+    width: 25vw;
+    height: 25vw;
+    background-color: #ffccc2;
   }
 
   .tickets-image{
-    width: 35vw;
-    height: 35vw;
+    width: 25vw;
+    height: 25vw;
     border-radius: 5px 0 0 0;
   }
 
@@ -97,41 +86,10 @@ export default {
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
-    color: #333;
+    color: #FFF;
     font-size: 12px;
-    font-weight: bolder;
     border-radius: 0 5px 0 0;
-    background-color: rgba(250, 250, 250, .9);
-  }
-
-  .tickets-info .shop{
-    padding-left: .2rem;
-    height: 5vw;
-    line-height: 5vw;
-    text-overflow:ellipsis;
-    word-break: break-all;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    overflow: hidden;
-    width: 97%;
-    color: #AAA;
-    font-size: 12px;
-  }
-
-  .tickets-info .reason{
-    padding-left: .2rem;
-    max-height: 10vw;
-    line-height: 5vw;
-    text-overflow:ellipsis;
-    word-break: break-all;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-    font-size: 12px;
-    width: 97%;
-    color: #AAA;
+    background-color: #ff9999;
   }
 
   .tickets-info .left-text{
@@ -150,33 +108,25 @@ export default {
   }
 
   .discount{
-    display: flex;
     position:relative;
     padding-left: .2rem;
     color: red;
     font-size: 14px;
   }
 
-  .volumn{
-    width: 100%;
-    height: 5vw;
-    line-height: 5vw;
-    padding-left: .2rem;
-    text-overflow:ellipsis;
-    word-break: break-all;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-    overflow: hidden;
-    font-size: 12px;
-    color: #555
-  }
-
   .zkh-price{
-    color: #ff834e;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    color: red;
+    background-color: #ffccc2;
+    border-bottom: 1px dotted #FFF;
 
     i {
-      padding: 0 .5rem;
+      font-size: 16px;
+      margin-right: .5rem;
     }
   }
 </style>

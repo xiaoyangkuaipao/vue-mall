@@ -8,25 +8,25 @@
         <div class="mint-tab-item-icon">
           <i class="iconfont icon-shouye"/>
         </div>
-        首页
+        <span>首页</span>
       </mt-tab-item>
       <mt-tab-item id="superSearch">
         <div class="mint-tab-item-icon">
           <i class="iconfont icon-taokouling"/>
         </div>
-        淘口令搜索
+        <span>淘口令搜索</span>
       </mt-tab-item>
       <mt-tab-item id="collections">
         <div class="mint-tab-item-icon">
           <i class="iconfont icon-shoucangjia"/>
         </div>
-        收藏夹
+        <span>收藏夹</span>
       </mt-tab-item>
       <mt-tab-item id="mine">
         <div class="mint-tab-item-icon">
           <i class="iconfont icon-wode"/>
         </div>
-        我的
+        <span>我的</span>
       </mt-tab-item>
     </mt-tabbar>
   </div>

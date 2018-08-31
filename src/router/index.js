@@ -6,6 +6,7 @@ import searchPage from '@/pages/searchPage';
 import superSearchPage from '@/pages/superSearchPage';
 import TicketDetailPage from '@/pages/TicketDetailPage';
 import CollectionsPage from '@/pages/CollectionsPage';
+import MinePage from '@/pages/MinePage';
 
 Vue.use(Router);
 
@@ -15,9 +16,12 @@ export default new Router({
       path: '/',
       name: 'app',
       component: Infrastructure,
+      redirect: '/home',
       children: [
         {path: "/home", name: 'home', component: indexPage},
         {path: "/superSearch", name: 'superSearch', component: superSearchPage},
+        {path: '/collections/', name: 'collections', component: CollectionsPage},
+        {path: '/mine/', name: 'mine', component: MinePage},
       ]
     },
     {
@@ -29,17 +33,7 @@ export default new Router({
       path: '/search/',
       name: 'search',
       component: searchPage,
-    },
-    {
-      path: '/superSearch/',
-      name: 'superSearch',
-      component: superSearchPage,
-    },
-    {
-      path: '/collections/',
-      name: 'collections',
-      component: CollectionsPage,
-    },
+    }
   ],
 })
 

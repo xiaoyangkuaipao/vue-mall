@@ -7,7 +7,7 @@
         元
       </p>
       <p class="tip-1">直接打开淘宝APP，即可领取优惠！</p>
-      <p class="tip-2">若打开淘宝没跳转，请重新领取！</p>
+      <p class="tip-2">若淘宝没有自动跳转，请重新领取！</p>
       <p class="cancel-button">
         <i class="iconfont icon-shanchu3" @click="close"></i>
       </p>

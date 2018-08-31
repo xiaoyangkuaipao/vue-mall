@@ -18,7 +18,7 @@
           v-if="ticketsInfo"
           :tickets-info='ticketsInfo' />
         <div v-if="recommends.length !== 0">
-          <h3 style="font-size: 10px; text-align: center; color: #ff9999">/\  为您推荐  /\</h3>
+          <h3 style="font-size: 12px; text-align: center; color: #ff9999">/\  为您推荐  /\</h3>
           <tickets-item
             v-for='(item, index) in this.recommends'
             :tickets-info='item'

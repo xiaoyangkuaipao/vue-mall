@@ -19,7 +19,7 @@
 
 <script>
   import Clipboard from 'clipboard';
-  import { Toast } from 'mint-ui';
+  import { Toast, Indicator } from 'mint-ui';
 
   export default {
     name: "OperateButtons",
@@ -48,6 +48,9 @@
         }
       },
       async getTicket() {
+        Indicator.open({
+          text: '请稍后',
+        });
         const resp = await this.api.getTicketLink(this.ticket.coupon_click_url, this.ticket.pict_url, this.ticket.title)
         if(resp.data.model) {
           this.model = resp.data.model
@@ -58,9 +61,13 @@
           clipboard.on('error', () => {
             this.$store.commit('SET_TICKETINFO', this.ticket);
           });
+          Indicator.close();
+          this.$store.commit('SET_TICKETINFO', this.ticket);
+          this.$store.commit('SET_RED_PACKET_STATUS');
         } else {
           Toast('获取失败,请重新获取');
         }
+        this.$store.commit('SET_MINE_TICKETS', this.ticket);
       }
     }
   }

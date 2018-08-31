@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import { Indicator } from 'mint-ui';
 import ticketsItem from '../components/TicketsItem';
+import $ from 'jquery';
 
 export default {
   data() {
@@ -42,10 +42,18 @@ export default {
     if(collectionsTop) {
       window.scrollTo(0, collectionsTop);
     }
+    const self = this;
+    $(window).on('scroll', async function() {
+      const scrollTop = $(this).scrollTop();
+      self.$refs['colletionsPage'].dataset.top = scrollTop;
+    })
   },
   beforeDestroy() {
     const scrollTop = this.$refs['colletionsPage'].dataset.top;
     this.$store.commit('SET_COLLECTIONS_TOP', scrollTop);
+  },
+  destroyed() {
+    $(window).off('scroll')
   },
   methods: {
     cancel() {
@@ -71,6 +79,10 @@ export default {
 </script>
 
 <style rel='stylesheet/less' lang='less' scoped>
+  .colletions-page {
+    padding-bottom: 55px;
+  }
+
   .history {
     padding: 5px 0;
   }
@@ -106,11 +118,11 @@ export default {
 
   .search{
     width: 100vw;
-    height: 2.5rem;
+    height: 3rem;
     position: fixed;
     top: 0;
     left: 0;
-    line-height: 2.5rem;
+    line-height: 3rem;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -142,7 +154,7 @@ export default {
     height: 1.4rem !important;
     line-height: 1.4rem;
     padding-left: 1.5rem;
-    font-size: .6rem;
+    font-size: 12px;
     letter-spacing: 2px;
     border-radius: 5px;
     border: 1px solid #FFF;
