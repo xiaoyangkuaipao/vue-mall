@@ -16,13 +16,16 @@
     <h3 style="font-size: 12px; text-align: center; color: #ff9999">/\  淘货er之旅  /\</h3>
     <div>
       <timeline>
-        <timeline-item bg-color="#ff9999" v-for="item in Object.keys(this.$store.state.mines.tickets)">
+        <timeline-item bg-color="#ff9999" v-if="Object.keys($store.state.mines.tickets).length > 0" v-for="item in Object.keys($store.state.mines.tickets)">
           <p style="font-size: 12px; color: #999">{{item}}</p>
           <simple-tickets-item
             v-for="ticket in mines.tickets[item]"
             :tickets-info="ticket"
             :key="ticket.num_iid">
           </simple-tickets-item>
+        </timeline-item>
+        <timeline-item bg-color="#ff9999" v-if="Object.keys($store.state.mines.tickets).length === 0">
+          <p style="font-size: 14px; color: #999">立即领券，开启淘货er之旅</p>
         </timeline-item>
       </timeline>
     </div>
@@ -61,8 +64,9 @@ export default {
       line-height: 3rem;
       text-align: center;
       font-size: 16px;
-      background-color: #ff9999;
-      color: #FFF;
+      background-color: #fff2da;
+      color: #666;
+      letter-spacing: 1px;
       font-weight: bolder;
     }
 

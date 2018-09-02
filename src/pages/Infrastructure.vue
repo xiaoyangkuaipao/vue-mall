@@ -14,7 +14,7 @@
         <div class="mint-tab-item-icon">
           <i class="iconfont icon-taokouling"/>
         </div>
-        <span>淘口令搜索</span>
+        <span>优惠券搜索</span>
       </mt-tab-item>
       <mt-tab-item id="collections">
         <div class="mint-tab-item-icon">
@@ -43,6 +43,10 @@
     },
     created() {
       this.selectedTab = !!this.$store.state.tab ? this.$store.state.tab : 'home'
+    },
+    mounted() {
+      const name = this.$router.history.current.name ? this.$router.history.current.name : 'home';
+      this.selectedTab = name;
     },
     watch: {
       selectedTab: function(val) {

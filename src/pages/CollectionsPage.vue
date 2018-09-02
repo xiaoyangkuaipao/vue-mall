@@ -11,12 +11,20 @@
       <i class="iconfont icon-shanchu3 delete-icon" v-if="q" @click="cancel"></i>
       <span style="font-size: 14px; color: #555; letter-spacing: 1px" @click="search">搜索</span>
     </div>
-    <div style="margin-top: 3rem">
+    <div v-if="this.ticketsInfo.length > 0">
       <tickets-item
         v-for='(item, index) in ticketsInfo'
         :tickets-info='item'
         :key='index'>
       </tickets-item>
+    </div>
+    <div
+      v-if="this.ticketsInfo.length === 0"
+      style="height: calc(100vh - 8rem); display: flex; justify-content: center;align-items: center">
+      <img
+        style="width: 70vw"
+        src="../../static/imgs/empty-collection.png"
+        alt="收藏夹为空">
     </div>
     <div style="font-size: 12px; text-align: center; margin-top:1rem; color: #CCC" v-if="this.ticketsInfo.length > 0">~~是时候看到淘货er的底线了~~</div>
   </div>
@@ -80,40 +88,18 @@ export default {
 
 <style rel='stylesheet/less' lang='less' scoped>
   .colletions-page {
+    padding-top: 3rem;
     padding-bottom: 55px;
-  }
-
-  .history {
-    padding: 5px 0;
-  }
-
-  .history-title {
-    display: flex;
-    justify-content: space-between;
-    color: #AAA;
-    padding-left: .5rem;
-    letter-spacing: 1px;
-    margin-top: .5rem;
-    font-size: 12px;
-  }
-
-  .history-item {
-    display: inline-block;
-    padding: 3px 10px;
-    margin: .2rem;
-    font-size: 12px;
-    border-radius: 5px;
-    background-color: #EEE;
   }
 
   .sousuo-icon {
     position: absolute;
-    left: 20vw;
+    left: 19vw;
   }
 
   .delete-icon {
     position: absolute;
-    left: 74vw;
+    left: 76vw;
   }
 
   .search{
@@ -127,7 +113,7 @@ export default {
     align-items: center;
     justify-content: space-around;
     color: #FFF;
-    background-color: #ff9999;
+    background-color: #fff2da;
     z-index: 10;
     opacity: .9;
   }
@@ -150,16 +136,18 @@ export default {
 
   .search-input{
     position: relative;
-    width: 55vw;
+    width: 52vw;
     height: 1.4rem !important;
     line-height: 1.4rem;
     padding-left: 1.5rem;
+    padding-left: 1.5rem;
+    padding-right:1.5rem;;
     font-size: 12px;
     letter-spacing: 2px;
-    border-radius: 5px;
+    border-radius: .7rem;
     border: 1px solid #FFF;
     color: #FFF;
-    background-color: transparent;
+    background-color: #f96c4e;
   }
 
   input::-webkit-input-placeholder{

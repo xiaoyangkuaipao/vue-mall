@@ -15,6 +15,7 @@ export default {
         params: {
           q: this.content.q,
           name: this.content.name,
+          img: this.content.img,
         }
       })
     }
@@ -28,7 +29,7 @@ export default {
     flex-direction: column;
     width: 15vw;
     height: 20vw;
-    margin: .3rem 4vw;
+    margin: .3rem 2vw;
   }
 
   .iwt-img{

@@ -9,7 +9,7 @@
       <i class="iconfont icon-shoucang1" v-show="this.isCollected" style="color: red"></i>
       <span>收藏</span>
     </section>
-    <section class="button get-ticket-button" data-clipboard-target="#taokouling" data-clipboard-action="copy" @click="getTicket">
+    <section class="button get-ticket-button" data-clipboard-target="#taokouling" data-clipboard-action="copy" @click="getModel">
       <i class="iconfont icon-lingquan-copy"></i>
       <input style="opacity: 0; position: absolute; z-index: -1" type="text" id="taokouling" :value="this.model">
       <span>领券</span>
@@ -35,6 +35,7 @@
       if(arr.length !== 0) {
         this.isCollected = true
       }
+      this.getTicket()
     },
     methods: {
       collect() {
@@ -47,6 +48,22 @@
           Toast('取消收藏');
         }
       },
+      getModel() {
+        if(this.model) {
+          const clipboard = new Clipboard('.get-ticket-button');
+          clipboard.on('success', () => {
+            this.$store.commit('SET_TICKETINFO', this.ticket);
+        });
+          clipboard.on('error', () => {
+            this.$store.commit('SET_TICKETINFO', this.ticket);
+        });
+          this.$store.commit('SET_TICKETINFO', this.ticket);
+          this.$store.commit('SET_RED_PACKET_STATUS');
+        } else {
+          Toast('获取失败,请重新获取');
+        }
+        this.$store.commit('SET_MINE_TICKETS', this.ticket);
+      },
       async getTicket() {
         Indicator.open({
           text: '请稍后',
@@ -54,20 +71,8 @@
         const resp = await this.api.getTicketLink(this.ticket.coupon_click_url, this.ticket.pict_url, this.ticket.title)
         if(resp.data.model) {
           this.model = resp.data.model
-          const clipboard = new Clipboard('.get-ticket-button');
-          clipboard.on('success', () => {
-            this.$store.commit('SET_TICKETINFO', this.ticket);
-          });
-          clipboard.on('error', () => {
-            this.$store.commit('SET_TICKETINFO', this.ticket);
-          });
           Indicator.close();
-          this.$store.commit('SET_TICKETINFO', this.ticket);
-          this.$store.commit('SET_RED_PACKET_STATUS');
-        } else {
-          Toast('获取失败,请重新获取');
         }
-        this.$store.commit('SET_MINE_TICKETS', this.ticket);
       }
     }
   }

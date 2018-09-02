@@ -1,7 +1,6 @@
 <template>
   <div class="search-page" ref="topicPage">
-    <header class="header">{{topic.name}}</header>
-    <img :src="topic.img" :alt="topic.name" style="width: 100vw; height: 45vw;" >
+    <img :src="topic.img" :alt="topic.q" style="width: 100vw; height: 40vw;" >
     <div class="card-search-page">
       <card-tickets-item
         v-for='(item, index) in ticketsInfo'
@@ -35,9 +34,9 @@ export default {
       this.topic = topic;
       this.search();
     } else {
-      const topic = JSON.parse(window.sessionStorage.getItem('topic'))
-      this.topic = topic;
-      this.q = topic.q;
+      const topic = this.$store.state.topic;
+      this.topic = topic.topic;
+      this.q = this.topic.q;
       this.ticketsInfo = topic.tickets;
     }
   },
@@ -61,6 +60,7 @@ export default {
     const scrollTop = this.$refs['topicPage'].dataset.top;
     const topic = {...this.$store.state.topic};
     topic.top = scrollTop;
+    topic.topic = this.topic;
     this.$store.commit('SET_TOPIC', topic);
   },
   destroyed() {
@@ -74,7 +74,6 @@ export default {
         return
       }else{
         await this.getTickets(this.q, this.searchPage);
-        this.$store.commit('SET_HISTORY', this.q)
       }
     },
     loadMore() {
@@ -102,11 +101,10 @@ export default {
           (Number(appendTickets[i].zk_final_price) - discountPrice).toFixed(2);
       }
       this.ticketsInfo = this.ticketsInfo.concat(appendTickets);
-      const ticketsInfo = {...this.$store.state.indexInfo};
-      ticketsInfo.tickets = this.ticketsInfo;
-      ticketsInfo.page = page;
-      ticketsInfo.q = this.q;
-      this.$store.commit('SET_TOPIC', ticketsInfo);
+      const topic = {...this.$store.state.topic};
+      topic.tickets = this.ticketsInfo;
+      topic.page = page;
+      this.$store.commit('SET_TOPIC', topic);
       Indicator.close();
     },
   },
@@ -115,28 +113,6 @@ export default {
 </script>
 
 <style rel='stylesheet/less' lang='less' scoped>
-  .history {
-    padding: 5px 0;
-  }
-
-  .history-title {
-    display: flex;
-    justify-content: space-between;
-    color: #AAA;
-    padding-left: .5rem;
-    margin-top: .5rem;
-    font-size: 12px;
-  }
-
-  .history-item {
-    display: inline-block;
-    padding: 3px 10px;
-    margin: .2rem;
-    font-size: 12px;
-    border-radius: 5px;
-    background-color: #EEE;
-  }
-
   .sousuo-icon {
     position: absolute;
     left: 20vw;

@@ -1,15 +1,11 @@
 <template>
   <div class='index-page' ref="indexPage">
     <SearchItem style="position: fixed; top: 0; z-index: 100"/>
+    <div class="zfb-hb" v-if="showZFBHB">
+    </div>
     <mt-swipe :auto="10000" class="swiper">
-      <mt-swipe-item>
-        <img src="../../static/imgs/slogan-1.jpg" class="slide-image">
-      </mt-swipe-item>
-      <mt-swipe-item class="slide-image">
-        <img src="../../static/imgs/slogan-2.jpg" class="slide-image">
-      </mt-swipe-item>
-      <mt-swipe-item class="slide-image">
-        <img src="../../static/imgs/slogan-3.jpg" class="slide-image">
+      <mt-swipe-item v-for="swipe in swipes" :key="swipe.q">
+        <img :src="swipe.img" class="slide-image" @click="goTopic(swipe)">
       </mt-swipe-item>
     </mt-swipe>
     <div class="categories">
@@ -22,20 +18,17 @@
     </div>
     <div class="subject-block">
       <h3 style="font-size: 12px; text-align: center; color: #ff9999">/\  淘货er专区  /\</h3>
-      <section>
-        支付宝红包
-      </section>
+      <section class="zhifubao" data-clipboard-target="#zhifubao" data-clipboard-action="copy" @click="getZFB"/>
+      <input style="opacity: 0; position: absolute; z-index: -1" type="text" id="zhifubao" :value="this.zfb">
       <section>
         <article>
-          <p>限时券</p>
+          <p class="xianshi" @click="goTopic(xianshi)"/>
         </article>
         <article>
-          <p>大牌驾到</p>
+          <p class="dapai" @click="goTopic(dapai)"/>
         </article>
       </section>
-      <section>
-        9.9包邮
-      </section>
+      <section class="douyin" @click="goTopic(douyin)"/>
     </div>
     <div
       keep-alive
@@ -54,6 +47,7 @@
 
 <script>
 import { Indicator } from 'mint-ui';
+import Clipboard from 'clipboard';
 import imgWithText from '../components/ImgWithText';
 import ticketsItem from '../components/TicketsItem';
 import SearchItem from '../components/SearchItem';
@@ -68,45 +62,83 @@ export default {
       immediate: false,
       showTicketInfo: false,
       searchPage: 1,
+      showZFBHB: false,
+      zfb: '支付宝红包再升级，红包种类更多，金额更大！人人可领，天天可领！长按复制此消息，打开支付宝领红包！cvKTpx76gx',
       q: '',
+      swipes: [{
+        img: require('../../static/imgs/muying.jpg'),
+        q: '母婴',
+        name: '母婴'
+      },{
+        img: require('../../static/imgs/kaixue.jpg'),
+        q: '开学',
+        name: '开学'
+      },{
+        img: require('../../static/imgs/zhongqiu.jpg'),
+        q: '中秋',
+        name: '中秋'
+      }],
+      xianshi: {
+        img: require('../../static/imgs/xianshi-topic.jpg'),
+        q: '限时',
+        name: '限时'
+      },
+      dapai: {
+        img: require('../../static/imgs/dapai-topic.png'),
+        q: '大牌',
+        name: '大牌'
+      },
+      douyin: {
+        img: require('../../static/imgs/douyin.jpg'),
+        q: '抖音',
+        name: '抖音'
+      },
       categories: [
         {
           pic: require('../../static/imgs/snacks.jpg'),
+          img: require('../../static/imgs/lingshi.jpg'),
           q: '零食',
           name: '零食'
         },
         {
           pic: require('../../static/imgs/lips.jpg'),
+          img: require('../../static/imgs/meizhuang.jpg'),
           q: '口红',
           name: '美妆'
         },
         {
           pic: require('../../static/imgs/lady-clothes.jpg'),
+          img: require('../../static/imgs/nvzhuang.jpg'),
           q: '女装',
           name: '女装'
         },
         {
           pic: require('../../static/imgs/man-clothes.jpg'),
+          img: require('../../static/imgs/nanzhuang.jpg'),
           q: '男装',
           name: '男装'
         },
         {
           pic: require('../../static/imgs/appliances.jpg'),
+          img: require('../../static/imgs/dianqi.jpg'),
           q: '家用电器',
           name: '电器'
         },
         {
           pic: require('../../static/imgs/bags.jpg'),
+          img: require('../../static/imgs/xiangbao.jpg'),
           q: '箱包',
           name: '箱包'
         },
         {
           pic: require('../../static/imgs/lady-shoes.jpg'),
+          img: require('../../static/imgs/nvxie.jpg'),
           q: '女鞋',
           name: '女鞋'
         },
         {
           pic: require('../../static/imgs/man-shoes.jpg'),
+          img: require('../../static/imgs/nanxie.jpg'),
           q: '男鞋',
           name: '男鞋'
         },
@@ -145,6 +177,17 @@ export default {
     $(window).off('scroll')
   },
   methods: {
+    getZFB() {
+      this.showZFBHB = true;
+      const clipboard = new Clipboard('.zhifubao');
+      clipboard.on('success', () => {
+      });
+      clipboard.on('error', () => {
+      });
+      setTimeout(() => {
+        this.showZFBHB = false;
+      }, 1500);
+    },
     async getTickets(q, page) {   // q: 查询内容 ； page: 查询页数
       Indicator.open({
         text: '淘货er中',
@@ -175,6 +218,13 @@ export default {
       this.searchPage = this.$store.state.indexInfo.page + 1;
       this.getTickets(this.q, this.searchPage);
     },
+
+    goTopic(topic) {
+      this.$router.push({
+        name: 'topic',
+        params: topic
+      })
+    }
   },
   components: { imgWithText, ticketsItem, SearchItem },
 };
@@ -190,13 +240,53 @@ export default {
     background-color: rgb(240, 240 ,240);
   }
 
+  .zfb-hb {
+    width: 70vw;
+    height: 56vw;
+    position: absolute;
+    margin: 30vw 15vw 0 15vw;
+    background: url("../../static/imgs/zfb-hb.gif") no-repeat;
+    background-size: cover;
+    z-index: 10;
+    color: #FFF;
+    text-align: center;
+  }
+  .zhifubao {
+    background: url("../../static/imgs/zhifubao.jpg") no-repeat;
+    background-size: cover;
+    height: 23.75vw;
+    border-radius: 4px;
+  }
+
+  .dapai {
+    background: url("../../static/imgs/dapai.png") no-repeat;
+    background-size: cover;
+    height: 30vw;
+    border-radius: 4px;
+  }
+
+  .douyin {
+    background: url("../../static/imgs/douyin.jpg") no-repeat;
+    background-size: cover;
+    height: 33vw;
+    border-radius: 4px;
+  }
+
+  .xianshi {
+    background: url("../../static/imgs/xianshi.jpg") no-repeat;
+    background-size: cover;
+    height: 30vw;
+    border-radius: 4px;
+  }
+
   .categories {
     height: 12rem;
-    width: 96%;
-    margin: -.5rem 2% 0 2%;
+    width: 90vw;
+    margin: -1.5rem 5vw 0 5vw;
     position: relative;
     border-radius: 5%;
-    background-color: rgba(255, 253, 253, 0.9);
+    background-color: rgba(255, 253, 253);
+    box-shadow: 2px 5px 15px #DDD;
   }
 
   .categories-inner {
@@ -225,7 +315,6 @@ export default {
     >section {
       display: flex;
       width: 95vw;
-      height: 30vw;
       margin: .8rem auto;
       text-align: center;
       justify-content: space-between;

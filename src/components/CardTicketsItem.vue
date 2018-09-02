@@ -47,7 +47,7 @@ export default {
     position: relative;
     width: 45vw;
     margin: .75rem 2.5vw;
-    height: 78vw;
+    height: 72vw;
     border-radius: 5px;
     background-color: #FFF;
   }
@@ -72,13 +72,13 @@ export default {
   .tickets-info .title{
     display: -webkit-box;
     width: 100%;
-    height: 18vw;
+    height: 12vw;
     line-height: 6vw;
     padding-left: .2rem;
     text-overflow:ellipsis;
     word-break: break-all;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     overflow: hidden;
     color: #333;
     font-size: 12px;

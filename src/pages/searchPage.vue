@@ -37,7 +37,7 @@
         >{{item}}</label>
       </div>
     </div>
-    <div style="margin-top: 3rem">
+    <div style="margin-top: 3.5rem">
       <tickets-item
         v-for='(item, index) in ticketsInfo'
         :tickets-info='item'
@@ -185,21 +185,12 @@ export default {
 
   .sousuo-icon {
     position: absolute;
-    left: 20vw;
+    left: 18vw;
   }
 
   .delete-icon {
     position: absolute;
-    left: 74vw;
-  }
-
-  .card-search-page {
-    position: relative;
-    margin-top: -.75rem;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    background-color: rgb(240, 240 ,240);
+    left: 77vw;
   }
 
   .search{
@@ -213,7 +204,7 @@ export default {
     align-items: center;
     justify-content: space-around;
     color: #FFF;
-    background-color: #ff9999;
+    background-color: #fff2da;
     z-index: 10;
   }
 
@@ -248,16 +239,17 @@ export default {
 
   .search-input{
     position: relative;
-    width: 55vw;
+    width: 53vw;
     height: 1.4rem !important;
     line-height: 1.4rem;
     padding-left: 1.5rem;
+    padding-right: 1.5rem;
     font-size: 12px;
     letter-spacing: 2px;
-    border-radius: 5px;
+    border-radius: .7rem;
     border: 1px solid #FFF;
     color: #FFF;
-    background-color: transparent;
+    background-color: #f96c4e;
     background-image: none !important;
   }
 

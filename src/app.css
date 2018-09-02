@@ -7,9 +7,17 @@ a {
   text-decoration: none;
 }
 
+.v-modal {
+  background-color: #00000091;
+}
+
 .mint-indicator-text {
   font-size: 10px;
   letter-spacing: 3px;
+}
+
+.mint-toast {
+  z-index: 9999;
 }
 
 .mint-tabbar {

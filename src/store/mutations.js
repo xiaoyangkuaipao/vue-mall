@@ -71,8 +71,9 @@ export default {
       const flag = tickets.every(t  => t.num_iid !== ticket.num_iid);
       if(flag) {
         state.mines.tickets[date].push(ticket)
-        state.mines.len += 1;
-        state.mines.sum += ticket.discountPrice;
+        state.mines.len = Number(state.mines.len) + 1;
+
+        state.mines.sum = Number(state.mines.sum) + Number(ticket.discountPrice);
       }
     } else {
       state.mines.tickets[date] = [];

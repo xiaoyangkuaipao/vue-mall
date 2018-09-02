@@ -18,23 +18,6 @@ Vue.use(VueAxios, axios);
 Vue.config.productionTip = false;
 Vue.prototype.api = api;
 
-Vue.directive('scrollMore', {
-  bind: function(el, binding) {
-    $(window).on('scroll', async function() {
-      const clientHeight = $(this).height();
-      const scrollTop = $(this).scrollTop();
-      const scrollHeight = $(document).height();
-      el.dataset.top = scrollTop;
-      if(scrollTop + clientHeight === scrollHeight){
-        await binding.value();
-      }
-    })
-  },
-  unbind: function () {
-    $(window).off('scroll');
-  }
-})
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -60,7 +43,7 @@ new Vue({
           searchInfo.cache = false;
         }
       }
-      if(to.name === "home" || "superSearch" || "collections") {
+      if(to.name === "home" || "superSearch" || "collections" || "mine") {
         this.$store.commit('SET_TAB', to.name);
       }
       this.$store.commit('SET_SUPERSEARCHS', superSearchInfo);
