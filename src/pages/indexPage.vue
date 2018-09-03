@@ -80,13 +80,13 @@ export default {
       }],
       xianshi: {
         img: require('../../static/imgs/xianshi-topic.jpg'),
-        q: '限时',
-        name: '限时'
+        q: '限时抢购',
+        name: '限时抢购'
       },
       dapai: {
-        img: require('../../static/imgs/dapai-topic.png'),
-        q: '大牌',
-        name: '大牌'
+        img: require('../../static/imgs/dapai-topic.jpg'),
+        q: '奢侈品牌',
+        name: '奢侈品牌'
       },
       douyin: {
         img: require('../../static/imgs/douyin.jpg'),
@@ -102,8 +102,8 @@ export default {
         },
         {
           pic: require('../../static/imgs/lips.jpg'),
-          img: require('../../static/imgs/meizhuang.jpg'),
-          q: '口红',
+          img: require('../../static/imgs/meizhuang-topic.jpg'),
+          q: '化妆品',
           name: '美妆'
         },
         {
@@ -127,8 +127,8 @@ export default {
         {
           pic: require('../../static/imgs/bags.jpg'),
           img: require('../../static/imgs/xiangbao.jpg'),
-          q: '箱包',
-          name: '箱包'
+          q: '包',
+          name: '包包'
         },
         {
           pic: require('../../static/imgs/lady-shoes.jpg'),
@@ -241,16 +241,18 @@ export default {
   }
 
   .zfb-hb {
-    width: 70vw;
-    height: 56vw;
+    width: 50vw;
+    height: 21vw;
     position: absolute;
-    margin: 30vw 15vw 0 15vw;
-    background: url("../../static/imgs/zfb-hb.gif") no-repeat;
+    margin: 65vw 25vw 0 25vw;
+    background: url("../../static/imgs/zfb-hb.jpg") no-repeat;
     background-size: cover;
     z-index: 10;
     color: #FFF;
     text-align: center;
+    border-radius: 10px;
   }
+
   .zhifubao {
     background: url("../../static/imgs/zhifubao.jpg") no-repeat;
     background-size: cover;
@@ -259,7 +261,7 @@ export default {
   }
 
   .dapai {
-    background: url("../../static/imgs/dapai.png") no-repeat;
+    background: url("../../static/imgs/dapai.jpg") no-repeat;
     background-size: cover;
     height: 30vw;
     border-radius: 4px;
@@ -280,7 +282,7 @@ export default {
   }
 
   .categories {
-    height: 12rem;
+    height: 48vw;
     width: 90vw;
     margin: -1.5rem 5vw 0 5vw;
     position: relative;
@@ -290,9 +292,10 @@ export default {
   }
 
   .categories-inner {
-    margin-top: 1rem;
+    height: 100%;
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     justify-content: space-around;
   }
 

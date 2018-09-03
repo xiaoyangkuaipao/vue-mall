@@ -1,5 +1,6 @@
 <template>
   <div class="operate-buttons">
+    <input style="opacity: 0; position: absolute; z-index: -1" type="text" id="taokouling" :value="this.model">
     <section class="button detail-button">
       <i class="iconfont icon-shangpinxiangqing"></i>
       <a :href="this.ticket.item_url" target="_blank">详情</a>
@@ -11,7 +12,6 @@
     </section>
     <section class="button get-ticket-button" data-clipboard-target="#taokouling" data-clipboard-action="copy" @click="getModel">
       <i class="iconfont icon-lingquan-copy"></i>
-      <input style="opacity: 0; position: absolute; z-index: -1" type="text" id="taokouling" :value="this.model">
       <span>领券</span>
     </section>
   </div>

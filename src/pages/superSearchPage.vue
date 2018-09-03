@@ -162,6 +162,13 @@ export default {
           spinnerType: 'fading-circle',
         });
         const resp = await this.api.getTickets(this.token, 1);
+        if(!resp.results) {
+          setTimeout(()=> {
+            Indicator.close();
+            Toast('抱歉，暂无结果！');
+          }, 1000)
+          return;
+        }
         const appendTickets = resp.results.tbk_coupon;
         const len = appendTickets.length;
         if (len < 20) {
