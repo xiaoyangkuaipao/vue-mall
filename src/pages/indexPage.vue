@@ -1,7 +1,6 @@
 <template>
   <div class='index-page' ref="indexPage">
     <SearchItem style="position: fixed; top: 0; z-index: 100"/>
-    <div class="zfb-hb" v-if="showZFBHB">
     </div>
     <mt-swipe :auto="10000" class="swiper">
       <mt-swipe-item v-for="swipe in swipes" :key="swipe.q">
@@ -178,15 +177,12 @@ export default {
   },
   methods: {
     getZFB() {
-      this.showZFBHB = true;
       const clipboard = new Clipboard('.zhifubao');
       clipboard.on('success', () => {
       });
       clipboard.on('error', () => {
       });
-      setTimeout(() => {
-        this.showZFBHB = false;
-      }, 1500);
+      Toast('红包已入账！打开“支付宝”查看')
     },
     async getTickets(q, page) {   // q: 查询内容 ； page: 查询页数
       Indicator.open({
