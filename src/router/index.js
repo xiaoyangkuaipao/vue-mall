@@ -8,6 +8,7 @@ import TicketDetailPage from '@/pages/TicketDetailPage';
 import CollectionsPage from '@/pages/CollectionsPage';
 import MinePage from '@/pages/MinePage';
 import TopicPage from '@/pages/TopicPage';
+import sharePage from '@/pages/sharePage';
 
 Vue.use(Router);
 
@@ -24,6 +25,11 @@ export default new Router({
         {path: '/collections/', name: 'collections', component: CollectionsPage},
         {path: '/mine/', name: 'mine', component: MinePage},
       ]
+    },
+    {
+      path: '/share',
+      name: 'share',
+      component: sharePage,
     },
     {
       path: '/ticket-detail-page',

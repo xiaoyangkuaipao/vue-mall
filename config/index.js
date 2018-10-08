@@ -50,7 +50,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/', // 打包根路径taohuo
+    assetsPublicPath: '/',                             // 打包根路径taohuo
 
     /**
      * Source Maps

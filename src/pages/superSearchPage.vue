@@ -128,7 +128,17 @@ export default {
 
         const resp = await this.api.superSearch(token);
 
-        const title = resp.content ? resp.content : "";
+        let title = resp.content ? resp.content : "";
+
+        if(title.indexOf(':') !== -1) {
+          title = title.split(':')[1];
+        }
+
+        if(title.indexOf('(') !== -1) {
+          title = title.split('(')[0];
+        }
+
+        console.log(title);
 
         let id = '';
         if(resp.url) {
@@ -140,6 +150,10 @@ export default {
         }
 
         const t = await this.api.getRecommend(title);
+        if(!t.results.tbk_coupon) {
+          Toast('抱歉！该商品暂无优惠券！');
+          return;
+        }
         const appendTickets = t.results.tbk_coupon;
         const len = appendTickets.length;
         for (let i = 0; i < len; i += 1) {
@@ -320,7 +334,5 @@ export default {
   .search-bg{
     width: 100vw;
     height: 72vw;
-    background: url("../../static/imgs/super-search-bg.gif") no-repeat;
-    background-size: contain;
   }
 </style>

@@ -1,7 +1,6 @@
 <template>
   <div class='index-page' ref="indexPage">
     <SearchItem style="position: fixed; top: 0; z-index: 100"/>
-    </div>
     <mt-swipe :auto="10000" class="swiper">
       <mt-swipe-item v-for="swipe in swipes" :key="swipe.q">
         <img :src="swipe.img" class="slide-image" @click="goTopic(swipe)">
@@ -16,23 +15,23 @@
       </div>
     </div>
     <div class="subject-block">
-      <h3 style="font-size: 12px; text-align: center; color: #ff9999">/\  淘货er专区  /\</h3>
+      <h3 style="font-size: 12px; text-align: center; color: #ff9999">/\  淘货er福利  /\</h3>
       <section class="zhifubao" data-clipboard-target="#zhifubao" data-clipboard-action="copy" @click="getZFB"/>
       <input style="opacity: 0; position: absolute; z-index: -1" type="text" id="zhifubao" :value="this.zfb">
-      <section>
-        <article>
-          <p class="xianshi" @click="goTopic(xianshi)"/>
-        </article>
-        <article>
-          <p class="dapai" @click="goTopic(dapai)"/>
-        </article>
-      </section>
-      <section class="douyin" @click="goTopic(douyin)"/>
+      <!--<section>-->
+        <!--<article>-->
+          <!--<p class="xianshi" @click="goTopic(xianshi)"/>-->
+        <!--</article>-->
+        <!--<article>-->
+          <!--<p class="dapai" @click="goTopic(dapai)"/>-->
+        <!--</article>-->
+      <!--</section>-->
+      <!--<section class="douyin" @click="goTopic(douyin)"/>-->
     </div>
     <div
       keep-alive
       class="tickets">
-      <h3 style="font-size: 12px; text-align: center; color: #ff9999">/\  好券er放送  /\</h3>
+      <h3 style="font-size: 12px; text-align: center; color: #ff9999">/\  什么值得买  /\</h3>
       <tickets-item
         v-for='(item, index) in this.$store.state.indexInfo.tickets'
         :tickets-info='item'
@@ -45,16 +44,18 @@
 </template>
 
 <script>
-import { Indicator } from 'mint-ui';
+import { Indicator, Toast } from 'mint-ui';
 import Clipboard from 'clipboard';
 import imgWithText from '../components/ImgWithText';
 import ticketsItem from '../components/TicketsItem';
 import SearchItem from '../components/SearchItem';
+import MobileDetect from 'mobile-detect';
 import $ from 'jquery';
 
 export default {
   data() {
     return {
+      localeInfo: '',
       ticketsInfo: [],
       ticket: {},
       isLast: false,
@@ -77,74 +78,36 @@ export default {
         q: '中秋',
         name: '中秋'
       }],
-      xianshi: {
-        img: require('../../static/imgs/xianshi-topic.jpg'),
-        q: '限时抢购',
-        name: '限时抢购'
-      },
-      dapai: {
-        img: require('../../static/imgs/dapai-topic.jpg'),
-        q: '奢侈品牌',
-        name: '奢侈品牌'
-      },
-      douyin: {
-        img: require('../../static/imgs/douyin.jpg'),
-        q: '抖音',
-        name: '抖音'
-      },
       categories: [
         {
-          pic: require('../../static/imgs/snacks.jpg'),
-          img: require('../../static/imgs/lingshi.jpg'),
-          q: '零食',
-          name: '零食'
+          pic: require('../../static/imgs/9_9.jpg'),
+          img: require('../../static/imgs/9-9_topic.jpeg'),
+          q: '9.9包邮',
+          name: '9.9包邮'
         },
         {
-          pic: require('../../static/imgs/lips.jpg'),
-          img: require('../../static/imgs/meizhuang-topic.jpg'),
-          q: '化妆品',
-          name: '美妆'
+          pic: require('../../static/imgs/dapai-icon.jpg'),
+          img: require('../../static/imgs/dapai-topic.jpg'),
+          q: '奢侈品牌',
+          name: '潮流大牌'
         },
         {
-          pic: require('../../static/imgs/lady-clothes.jpg'),
-          img: require('../../static/imgs/nvzhuang.jpg'),
-          q: '女装',
-          name: '女装'
+          pic: require('../../static/imgs/xianshi-icon.jpg'),
+          img: require('../../static/imgs/xianshi-topic.jpg'),
+          q: '限时抢购',
+          name: '限时抢购'
         },
         {
-          pic: require('../../static/imgs/man-clothes.jpg'),
-          img: require('../../static/imgs/nanzhuang.jpg'),
-          q: '男装',
-          name: '男装'
-        },
-        {
-          pic: require('../../static/imgs/appliances.jpg'),
-          img: require('../../static/imgs/dianqi.jpg'),
-          q: '家用电器',
-          name: '电器'
-        },
-        {
-          pic: require('../../static/imgs/bags.jpg'),
-          img: require('../../static/imgs/xiangbao.jpg'),
-          q: '包',
-          name: '包包'
-        },
-        {
-          pic: require('../../static/imgs/lady-shoes.jpg'),
-          img: require('../../static/imgs/nvxie.jpg'),
-          q: '女鞋',
-          name: '女鞋'
-        },
-        {
-          pic: require('../../static/imgs/man-shoes.jpg'),
-          img: require('../../static/imgs/nanxie.jpg'),
-          q: '男鞋',
-          name: '男鞋'
-        },
+          pic: require('../../static/imgs/douyin-icon.jpg'),
+          img: require('../../static/imgs/douyin.jpg'),
+          q: '抖音',
+          name: '抖音爆款'
+        }
       ],
     };
   },
   created() {
+    // this.getLocaleInfo();
     if(this.$store.state.indexInfo.tickets.length === 0) {  // 初始化的时候加载一次
       this.getTickets(this.q, this.searchPage)
     } else {
@@ -176,20 +139,53 @@ export default {
     $(window).off('scroll')
   },
   methods: {
+    getLocaleInfo() {
+      if (returnCitySN) {
+        window.sessionStorage.setItem('ip', returnCitySN['cip']);
+      }
+      const ip = window.sessionStorage.getItem('ip');
+      const device_type = navigator.userAgent;
+      const md = new MobileDetect(device_type);//初始化mobile-detect
+      const ua = 'Mozilla/5.0';
+      let os = md.os();
+      if(os.toLowerCase() === 'ios') {
+        os = 'ios';
+      } else if(os.toLowerCase() === 'andriodos') {
+        os = 'andriod';
+      } else {
+        os = 'andriod';
+      }
+      if(ip && os) {
+        this.localeInfo = {
+          ip,
+          ua,
+          os,
+        }
+      }
+    },
     getZFB() {
       const clipboard = new Clipboard('.zhifubao');
       clipboard.on('success', () => {
       });
       clipboard.on('error', () => {
       });
-      Toast('红包已入账！打开“支付宝”查看')
+      Toast('红包已入账！打开“支付宝”查看');
+      setTimeout(() => {
+        window.open(`alipay://index.html`)
+      }, 800)
     },
     async getTickets(q, page) {   // q: 查询内容 ； page: 查询页数
       Indicator.open({
         text: '淘货er中',
         spinnerType: 'fading-circle',
       });
-      const resp = await this.api.getTickets(q, page);
+      let resp;
+      // if(this.localeInfo) {
+      //   const { ip, os, ua } = this.localeInfo;
+      //   resp = await this.api.guess(ip, os, ua, page);
+      // }
+      resp = await this.api.getTickets(q, page);
+
       const appendTickets = resp.results.tbk_coupon;
       const len = appendTickets.length;
       if (len < 20) {
@@ -232,8 +228,8 @@ export default {
     display: flex;
     flex-direction: column;
     overflow: auto;
-    padding: 3rem 0 55px 0;
-    background-color: rgb(240, 240 ,240);
+    padding: 5rem 0 55px 0;
+    background-color: rgb(245, 245, 245);
   }
 
   .zfb-hb {
@@ -278,11 +274,11 @@ export default {
   }
 
   .categories {
-    height: 48vw;
+    height: 24vw;
     width: 90vw;
     margin: -1.5rem 5vw 0 5vw;
     position: relative;
-    border-radius: 5%;
+    border-radius: 15%;
     background-color: rgba(255, 253, 253);
     box-shadow: 2px 5px 15px #DDD;
   }

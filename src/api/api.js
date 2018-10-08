@@ -33,7 +33,12 @@ export class All {      // 所有的api
   }
   superSearch(token) {
     return axios
-      .get('https://www.iamyangqi.cn/wx-new-mall/superSearch.php', { params: { token }, timeout: 3000 })
+      .get(`${prefix}/superSearch.php`, { params: { token }, timeout: 3000 })
+      .then(r => r.data)
+  }
+  guess(ip, os, ua, page) {
+    return axios
+      .get(`${prefix}/getGuess.php`, { params: { ip, os, ua, page }, timeout: 3000 })
       .then(r => r.data)
   }
 }

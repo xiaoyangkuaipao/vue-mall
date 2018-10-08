@@ -28,7 +28,7 @@ export default {
     display: flex;
     flex-direction: column;
     width: 15vw;
-    height: 20vw;
+    height: 22vw;
     margin: .3rem 2vw;
   }
 
@@ -40,8 +40,8 @@ export default {
 
   .iwt-text{
     width: 15vw;
-    height: 5vw;
-    line-height: 5vw;
+    height: 7vw;
+    line-height: 7vw;
     text-align: center;
     font-size: 12px;
     color: #000;

@@ -1,6 +1,7 @@
 <template>
   <div class="operate-buttons">
     <input style="opacity: 0; position: absolute; z-index: -1" type="text" id="taokouling" :value="this.model">
+    <input style="opacity: 0; position: absolute; z-index: -1" type="text" id="share" :value="this.shareUrl">
     <section class="button detail-button">
       <i class="iconfont icon-shangpinxiangqing"></i>
       <a :href="this.ticket.item_url" target="_blank">详情</a>
@@ -14,6 +15,10 @@
       <i class="iconfont icon-lingquan-copy"></i>
       <span>领券</span>
     </section>
+    <section class="button share-button" data-clipboard-target="#share" data-clipboard-action="copy" @click="share">
+      <i class="iconfont icon-share"></i>
+      <a>分享</a>
+    </section>
   </div>
 </template>
 
@@ -25,6 +30,7 @@
     name: "OperateButtons",
     data() {
       return {
+        shareUrl: '',
         isCollected: false,
         model: '',
       }
@@ -35,9 +41,20 @@
       if(arr.length !== 0) {
         this.isCollected = true
       }
-      this.getTicket()
+      this.getTicket();
+      this.shareUrl = `https://www.iamyangqi.cn/#/share?title=${encodeURI(this.ticket.title)}&num_iid=${encodeURI(this.ticket.num_iid)}`;
     },
     methods: {
+      share() {
+        const clipboard = new Clipboard('.share-button');
+        Toast({
+          message: '成功生成分享链接',
+        });
+        clipboard.on('success', () => {
+        });
+        clipboard.on('error', () => {
+        });
+      },
       collect() {
         this.isCollected = !this.isCollected;
         if(this.isCollected) {
@@ -53,12 +70,16 @@
           const clipboard = new Clipboard('.get-ticket-button');
           clipboard.on('success', () => {
             this.$store.commit('SET_TICKETINFO', this.ticket);
-        });
+          });
           clipboard.on('error', () => {
             this.$store.commit('SET_TICKETINFO', this.ticket);
-        });
+          });
           this.$store.commit('SET_TICKETINFO', this.ticket);
           this.$store.commit('SET_RED_PACKET_STATUS');
+
+          setTimeout(() => {
+            window.open(`taobao://m.taobao.com/tbopen/index.html`)
+          }, 800)
         } else {
           Toast('获取失败,请重新获取');
         }
@@ -70,7 +91,7 @@
         });
         const resp = await this.api.getTicketLink(this.ticket.coupon_click_url, this.ticket.pict_url, this.ticket.title)
         if(resp.data.model) {
-          this.model = resp.data.model
+          this.model = resp.data.model;
           Indicator.close();
         }
       }
@@ -107,10 +128,14 @@
   .detail-button {
     flex: 3;
     height: 35px;
-    margin-left: 1.5rem;
   }
 
-  .detail-button>i {
+  .share-button{
+    flex: 3;
+    height: 35px;
+  }
+
+  .detail-button>i, .detail-button>a, .share-button>i, .share-button>a{
     color: #ff6b70;
   }
 
@@ -125,7 +150,6 @@
     flex:4;
     height: 35px;
     border-radius: 0 35px 35px 0;
-    margin-right: 1.5rem;
     background-color: #ff6b70;
   }
 

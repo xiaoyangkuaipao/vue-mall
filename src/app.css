@@ -5,6 +5,9 @@ html, body, div, p, section {
 
 a {
   text-decoration: none;
+  font-size: 13px;
+  color: #000;
+  letter-spacing: 1px;
 }
 
 .v-modal {
@@ -14,6 +17,10 @@ a {
 .mint-indicator-text {
   font-size: 10px;
   letter-spacing: 3px;
+}
+
+.mint-swipe-indicators {
+  bottom: 1.8rem !important;
 }
 
 .mint-toast {

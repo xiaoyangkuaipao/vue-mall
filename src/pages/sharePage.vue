@@ -1,71 +1,31 @@
 <template>
-  <div class="search-page" ref="topicPage">
-    <img :src="topic.img" :alt="topic.q" style="width: 100vw; height: 40vw;" >
-    <div class="card-search-page">
-      <card-tickets-item
-        v-for='(item, index) in ticketsInfo'
-        :tickets-info='item'
-        :key='index'>
-      </card-tickets-item>
-    </div>
-    <div class="footer-text" v-if="isLast">~~是时候看到淘货er的底线了~~</div>
+  <div class="share-page">
   </div>
 </template>
 
 <script>
-import { Indicator } from 'mint-ui';
+import { Indicator, Toast } from 'mint-ui';
+import ticketsItem from '../components/TicketsItem';
 import cardTicketsItem from '../components/CardTicketsItem';
-import $ from 'jquery';
 
 export default {
-  name: 'topic',
+  name: 'sharePage',
   data() {
     return {
-      ticketsInfo: [],
-      searchPage: 1,
       q: '',
-      isLast: false,
-      topic: {},
+      num_iid: '',
     };
   },
   created() {
-    if(this.$route.params.q) {
-      this.q = this.$route.params.q;
-      const topic = this.$route.params;
-      this.topic = topic;
+    let title = decodeURI(this.$route.query.title);
+    let num_iid = decodeURI(this.$route.query.num_iid);
+    if (title && num_iid) {
+      this.q = title;
+      this.num_iid = num_iid;
       this.search();
     } else {
-      const topic = this.$store.state.topic;
-      this.topic = topic.topic;
-      this.q = this.topic.q;
-      this.ticketsInfo = topic.tickets;
+      Toast('很遗憾，分享链接失效！')
     }
-  },
-  mounted() {
-    const topic = this.$store.state.topic;
-    if(topic.top) {
-      window.scrollTo(0, topic.top);
-    }
-    const self = this;
-    $(window).on('scroll', async function() {
-      const clientHeight = $(this).height();
-      const scrollTop = $(this).scrollTop();
-      const scrollHeight = $(document).height();
-      self.$refs['topicPage'].dataset.top = scrollTop;
-      if(scrollTop + clientHeight + 50 > scrollHeight){
-        await self.loadMore();
-      }
-    })
-  },
-  beforeDestroy() {
-    const scrollTop = this.$refs['topicPage'].dataset.top;
-    const topic = {...this.$store.state.topic};
-    topic.top = scrollTop;
-    topic.topic = this.topic;
-    this.$store.commit('SET_TOPIC', topic);
-  },
-  destroyed() {
-    $(window).off('scroll')
   },
   methods: {
     async search() {
@@ -77,18 +37,19 @@ export default {
         await this.getTickets(this.q, this.searchPage);
       }
     },
-    loadMore() {
-      if(this.q) {
-        this.searchPage = this.$store.state.topic.page + 1;
-        this.getTickets(this.q, this.searchPage);
-      }
-    },
     async getTickets(q, page) {   // q: 查询内容 ； page: 查询页数
       Indicator.open({
         text: '淘货er中',
         spinnerType: 'fading-circle',
       });
       const resp = await this.api.getTickets(q, page);
+      if(!resp.results) {
+        setTimeout(()=> {
+          Indicator.close();
+          Toast('抱歉，暂无结果！');
+        }, 1000)
+        return;
+      }
       const appendTickets = resp.results.tbk_coupon;
       const len = appendTickets.length;
       if (len < 20) {
@@ -101,36 +62,52 @@ export default {
         appendTickets[i].discount =
           (Number(appendTickets[i].zk_final_price) - discountPrice).toFixed(2);
       }
-      this.ticketsInfo = this.ticketsInfo.concat(appendTickets);
-      const topic = {...this.$store.state.topic};
-      topic.tickets = this.ticketsInfo;
-      topic.page = page;
-      this.$store.commit('SET_TOPIC', topic);
+      this.ticketsInfo = appendTickets.filter((at) => at.num_iid == this.num_iid);
+      this.$router.push({
+        name: 'ticket-detail',
+        params:{
+          ticket: this.ticketsInfo[0],
+          share: true,
+        }
+      })
       Indicator.close();
     },
   },
-  components: { cardTicketsItem },
+  components: { ticketsItem, cardTicketsItem },
 };
 </script>
 
 <style rel='stylesheet/less' lang='less' scoped>
+  .history {
+    padding: 5px 0;
+  }
+
+  .history-title {
+    display: flex;
+    justify-content: space-between;
+    color: #AAA;
+    padding-left: .5rem;
+    margin-top: .5rem;
+    font-size: 12px;
+  }
+
+  .history-item {
+    display: inline-block;
+    padding: 3px 10px;
+    margin: .2rem;
+    font-size: 12px;
+    border-radius: 5px;
+    background-color: #EEE;
+  }
+
   .sousuo-icon {
     position: absolute;
-    left: 20vw;
+    left: 18vw;
   }
 
   .delete-icon {
     position: absolute;
-    left: 74vw;
-  }
-
-  .card-search-page {
-    position: relative;
-    margin-top: -.75rem;
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    background-color: rgb(240, 240 ,240);
+    left: 77vw;
   }
 
   .search{
@@ -144,7 +121,7 @@ export default {
     align-items: center;
     justify-content: space-around;
     color: #FFF;
-    background-color: #ff9999;
+    background-color: #fff2da;
     z-index: 10;
   }
 
@@ -179,16 +156,17 @@ export default {
 
   .search-input{
     position: relative;
-    width: 55vw;
+    width: 53vw;
     height: 1.4rem !important;
     line-height: 1.4rem;
     padding-left: 1.5rem;
+    padding-right: 1.5rem;
     font-size: 12px;
     letter-spacing: 2px;
-    border-radius: 5px;
+    border-radius: .7rem;
     border: 1px solid #FFF;
     color: #FFF;
-    background-color: transparent;
+    background-color: #f96c4e;
     background-image: none !important;
   }
 

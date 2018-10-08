@@ -1,5 +1,6 @@
 <template>
   <div class="ticket-detail">
+    <div class="go-to-index" v-if="share" @click="goToIndex">返回首页</div>
     <mt-swipe :auto="10000" class="swiper" v-if="ticketInfo.small_images">
       <mt-swipe-item
         v-for="item in this.ticketInfo.small_images.string"
@@ -46,6 +47,7 @@
       return {
         ticketInfo: {},
         recommendTickets: [],
+        share: false,
       }
     },
     created() {
@@ -55,10 +57,18 @@
         })
       }else {
         this.ticketInfo= this.$route.params.ticket;
+        if(this.$route.params.share) {
+          this.share = true;
+        }
         this.getRecommend();
       }
     },
     methods: {
+      goToIndex() {
+        this.$router.push({
+          name: 'home',
+        })
+      },
       async getRecommend() {
         Indicator.open({
           text: '淘货er中',
@@ -90,6 +100,21 @@
 <style scoped>
   .ticket-detail {
     padding-bottom: 55px;
+  }
+
+  .go-to-index {
+    position: fixed;
+    z-index: 100;
+    top: .5rem;
+    left: .5rem;
+    font-size: 10px;
+    text-align: center;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 100%;
+    font-weight: bolder;
+    background-color: rgba(255, 255, 255, .7);
   }
 
   .ticket-detail .swiper {
